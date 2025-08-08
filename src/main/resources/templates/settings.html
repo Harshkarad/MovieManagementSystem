@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Movie Ticket System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --sidebar-width: 220px;
+            /* Same as reports.html */
+            --mobile-sidebar-width: 280px;
+            /* Same as reports.html */
+        }
+
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            display: grid;
+            grid-template-areas:
+                "header header"
+                "sidebar content";
+            grid-template-columns: var(--sidebar-width) 1fr;
+            /* Changed from fixed 280px */
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            grid-area: header;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #e63946;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #loginBtn {
+            background-color: #457b9d;
+            color: white;
+        }
+
+        #registerBtn {
+            background-color: #1d3557;
+            color: white;
+        }
+
+        #profileBtn {
+            background-color: #457b9d;
+            color: white;
+        }
+
+        #logoutBtn {
+            background-color: #e63946;
+            color: white;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #e63946;
+        }
+
+        /* Sidebar Container - Updated to match requested theme */
+        .sidebar {
+            grid-area: sidebar;
+            background-color: #1a1a2e;
+            color: white;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            padding: 1rem 0;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            width: var(--sidebar-width);
+            /* Changed from fixed 280px */
+        }
+
+        /* Menu List */
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Menu Items */
+        .sidebar li {
+            margin: 0.25rem 0;
+            position: relative;
+        }
+
+        /* Menu Links */
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1.5rem;
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        /* Hover State */
+        .sidebar a:hover {
+            background-color: #16213e;
+            color: white;
+            border-left-color: #f43f5e;
+        }
+
+        /* Active State */
+        .sidebar li.active a {
+            background-color: #16213e;
+            color: white;
+            border-left-color: #f43f5e;
+        }
+
+        /* Icons */
+        .sidebar i {
+            width: 1.5rem;
+            font-size: 1.1rem;
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        .sidebar li.active i,
+        .sidebar a:hover i {
+            color: white;
+        }
+
+        /* Content Styles */
+        .content {
+            grid-area: content;
+            padding: 20px;
+            background-color: #f5f7fa;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Mobile Sidebar - Updated to match requested theme */
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            width: var(--mobile-sidebar-width);
+            /* Changed from fixed 320px */
+            left: calc(-1 * var(--mobile-sidebar-width));
+            /* Updated to use variable */
+            height: 100vh;
+            background-color: #1a1a2e;
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-sidebar.show {
+            left: 0;
+        }
+
+        .mobile-sidebar-header {
+            padding: 20px;
+            background-color: #16213e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a3f54;
+        }
+
+        .mobile-sidebar-header h3 {
+            color: white;
+            margin: 0;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mobile-sidebar-header .close-sidebar {
+            background: none;
+            border: none;
+            color: #f43f5e;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mobile-sidebar li {
+            margin: 0;
+        }
+
+        .mobile-sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 25px;
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .mobile-sidebar a:hover {
+            background-color: #16213e;
+            color: white;
+            border-left-color: #f43f5e;
+        }
+
+        .mobile-sidebar li.active a {
+            background-color: #16213e;
+            color: white;
+            border-left-color: #f43f5e;
+        }
+
+        .mobile-sidebar i {
+            width: 24px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .mobile-sidebar li.active i,
+        .mobile-sidebar a:hover i {
+            color: white;
+        }
+
+        .mobile-sidebar-footer {
+            padding: 20px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            border-top: 1px solid #2a3f54;
+            margin-top: 20px;
+        }
+
+        /* Overlay Styles */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            backdrop-filter: blur(3px);
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Sidebar Scrollbar Styling */
+        .mobile-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .mobile-sidebar::-webkit-scrollbar-track {
+            background: #16213e;
+        }
+
+        .mobile-sidebar::-webkit-scrollbar-thumb {
+            background-color: #f43f5e;
+            border-radius: 3px;
+        }
+
+        /* Animation for sidebar items */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .mobile-sidebar.show li {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        .mobile-sidebar.show li:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .mobile-sidebar.show li:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .mobile-sidebar.show li:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .mobile-sidebar.show li:nth-child(4) {
+            animation-delay: 0.25s;
+        }
+
+        .mobile-sidebar.show li:nth-child(5) {
+            animation-delay: 0.3s;
+        }
+
+        .mobile-sidebar.show li:nth-child(6) {
+            animation-delay: 0.35s;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .container {
+                grid-template-areas:
+                    "header"
+                    "content";
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .mobile-sidebar {
+                width: 85%;
+                left: -85%;
+            }
+
+            .mobile-sidebar a {
+                padding: 14px 20px;
+                font-size: 0.95rem;
+            }
+
+            .user-controls button .btn-text {
+                display: none;
+            }
+        }
+
+        /* Settings Page Specific Styles */
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e63946;
+        }
+
+        .settings-header h2 {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .settings-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .settings-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .settings-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .settings-card-header h3 {
+            font-size: 1.2rem;
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-card-header i {
+            color: #e63946;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #e63946;
+            outline: none;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-save {
+            background-color: #e63946;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-save:hover {
+            background-color: #c1121f;
+        }
+
+        .btn-cancel {
+            background-color: #94a3b8;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #64748b;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #e63946;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-label {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .theme-selector {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .theme-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .theme-option:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-option.selected {
+            border-color: #e63946;
+            transform: scale(1.1);
+        }
+
+        .theme-default {
+            background: linear-gradient(135deg, #1a1a2e 50%, #e63946 50%);
+        }
+
+        .theme-dark {
+            background: linear-gradient(135deg, #0f172a 50%, #7f1d1d 50%);
+        }
+
+        .theme-light {
+            background: linear-gradient(135deg, #f8fafc 50%, #fecaca 50%);
+        }
+
+        .theme-blue {
+            background: linear-gradient(135deg, #1e3a8a 50%, #3b82f6 50%);
+        }
+
+        .password-strength {
+            height: 5px;
+            background-color: #e2e8f0;
+            border-radius: 5px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .password-weak .password-strength-bar {
+            width: 30%;
+            background-color: #ef4444;
+        }
+
+        .password-medium .password-strength-bar {
+            width: 60%;
+            background-color: #f59e0b;
+        }
+
+        .password-strong .password-strength-bar {
+            width: 100%;
+            background-color: #10b981;
+        }
+
+        .password-hints {
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .password-hint {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 3px;
+        }
+
+        .password-hint.valid {
+            color: #10b981;
+        }
+
+        .password-hint.invalid {
+            color: #64748b;
+        }
+
+        .password-hint i {
+            font-size: 0.7rem;
+        }
+
+        .api-key-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .api-key-value {
+            flex: 1;
+            padding: 10px;
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .btn-copy {
+            background-color: #1d3557;
+            color: white;
+            padding: 0 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-copy:hover {
+            background-color: #14213d;
+        }
+
+        .btn-regenerate {
+            background-color: #e63946;
+            color: white;
+            padding: 0 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-regenerate:hover {
+            background-color: #c1121f;
+        }
+
+        .backup-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .backup-option {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .backup-option:hover {
+            background-color: #f1f5f9;
+            transform: translateY(-3px);
+        }
+
+        .backup-option i {
+            font-size: 2rem;
+            color: #457b9d;
+            margin-bottom: 10px;
+        }
+
+        .backup-option h4 {
+            margin-bottom: 5px;
+            color: #1a1a2e;
+        }
+
+        .backup-option p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .activity-log {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .activity-item {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            color: #1a1a2e;
+        }
+
+        .activity-time {
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+
+        .activity-details {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .activity-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: white;
+        }
+
+        .activity-login {
+            background-color: #10b981;
+        }
+
+        .activity-settings {
+            background-color: #3b82f6;
+        }
+
+        .activity-security {
+            background-color: #ef4444;
+        }
+
+        .activity-backup {
+            background-color: #8b5cf6;
+        }
+
+        /* Responsive adjustments for settings */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .backup-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 400px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            margin-left: 15px;
+            color: inherit;
+        }
+
+        .backup-option.active {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .backup-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .backup-option:active {
+            transform: scale(0.98);
+        }
+
+        .backup-option:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1><i class="fas fa-ticket-alt"></i> Movie Ticket System</h1>
+            </div>
+            <div class="user-controls">
+                
+                <button id="logoutBtn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="btn-text">Logout</span>
+                </button>
+
+                <script>
+                    function logout() {
+                        fetch('/logout', {
+                            method: 'GET',
+                            credentials: 'same-origin' // This ensures cookies/session are included
+                        })
+                            .then(response => {
+                                if (response.redirected) {
+                                    window.location.href = response.url; // Redirect to the home page
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Logout error:', error);
+                            });
+                    }
+                </script>
+            </div>
+        </header>
+
+        <nav class="sidebar">
+            <ul>
+                <li><a href="/admin-home"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/movies"><i class="fas fa-film"></i> Movies</a></li>
+                <li><a th:href="@{/screenings}"><i class="fas fa-calendar-alt"></i> Screenings</a></li>
+                <li><a th:href="@{/customers}"><i class="fas fa-users"></i> Customers</a></li>
+                <li><a href="/reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li class="active"><a href="/settings"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+        </nav>
+
+        <!-- Mobile Sidebar -->
+        <div class="mobile-sidebar">
+            <div class="mobile-sidebar-header">
+                <h3><i class="fas fa-ticket-alt"></i> Movie Ticket System</h3>
+                <button class="close-sidebar" aria-label="Close menu">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <ul>
+                <li><a href="/admin-home"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="/movies"><i class="fas fa-film"></i> Movies</a></li>
+                <li><a th:href="@{/screenings}"><i class="fas fa-calendar-alt"></i> Screenings</a></li>
+                <li><a th:href="@{/customers}"><i class="fas fa-users"></i> Customers</a></li>
+                <li><a href="/reports"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li class="active"><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+            <div class="mobile-sidebar-footer">
+                &copy; 2023 Movie Ticket System
+            </div>
+        </div>
+
+        <div class="sidebar-overlay"></div>
+
+        <main class="content">
+            <div class="settings-header">
+                <h2><i class="fas fa-cog"></i> System Settings</h2>
+            </div>
+            <div th:if="${success != null and !success.isEmpty()}" class="alert alert-success"
+                style="position: fixed; top: 20px; right: 20px; z-index: 1100;">
+                <span th:text="${success}"></span>
+                <button type="button" class="close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+
+            <div th:if="${error != null and !error.isEmpty()}" class="alert alert-danger"
+                style="position: fixed; top: 20px; right: 20px; z-index: 1100;">
+                <span th:text="${error}"></span>
+                <button type="button" class="close" onclick="this.parentElement.style.display='none'">&times;</button>
+            </div>
+
+            <div class="settings-container">
+
+
+                <!-- User Account Settings Card -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3><i class="fas fa-user-shield"></i> Account Settings</h3>
+                    </div>
+                    <form id="accountSettingsForm" th:action="@{/settings/account}" method="post">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" value="admin" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" th:value="${admin.email}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" name="newPassword">
+                                <div class="password-strength">
+                                    <div class="password-strength-bar"></div>
+                                </div>
+                                <div class="password-hints">
+                                    <div class="password-hint invalid">
+                                        <i class="fas fa-circle"></i> At least 8 characters
+                                    </div>
+                                    <div class="password-hint invalid">
+                                        <i class="fas fa-circle"></i> Contains a number
+                                    </div>
+                                    <div class="password-hint invalid">
+                                        <i class="fas fa-circle"></i> Contains a special character
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm Password</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword">
+                            </div>
+                        </div>
+
+                        
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel">Cancel</button>
+                            <button type="submit" class="btn-save">Update Account</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- System Preferences Card -->
+
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3><i class="fas fa-tasks"></i> System Preferences</h3>
+                    </div>
+                    <form id="preferencesForm" th:action="@{/settings/preferences}" method="post">
+                        <div class="form-group">
+                            <div class="toggle-container">
+                                <label class="toggle-label">Enable Maintenance Mode</label>
+                                <label class="switch">
+                                    <input type="checkbox" name="maintenanceMode" id="maintenanceMode"
+                                        th:checked="${preferences.maintenanceMode}">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <small class="text-muted">When enabled, only administrators can access the
+                                system.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="toggle-container">
+                                <label class="toggle-label">Enable User Registration</label>
+                                <label class="switch">
+                                    <input type="checkbox" name="userRegistration" id="userRegistration"
+                                        th:checked="${preferences.userRegistration}">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="toggle-container">
+                                <label class="toggle-label">Enable Email Notifications</label>
+                                <label class="switch">
+                                    <input type="checkbox" name="emailNotifications" id="emailNotifications"
+                                        th:checked="${preferences.emailNotifications}">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="toggle-container">
+                                <label class="toggle-label">Enable Audit Logging</label>
+                                <label class="switch">
+                                    <input type="checkbox" name="auditLogging" id="auditLogging"
+                                        th:checked="${preferences.auditLogging}">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel">Cancel</button>
+                            <button type="submit" class="btn-save">Save Preferences</button>
+                        </div>
+                    </form>
+                </div>
+
+
+                <!-- Backup & Restore Card -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3><i class="fas fa-database"></i> Backup & Restore</h3>
+                    </div>
+                    <form id="backupForm">
+                        <div class="form-group">
+                            
+                            <div class="backup-options">
+                                
+                                <div class="backup-options">
+                                    <div class="backup-option" onclick="window.location.href='/settings/backup'">
+                                        <i class="fas fa-file-export"></i>
+                                        <h4>Create Full Backup</h4>
+                                        <p>Download complete database backup as ZIP</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Add this hidden form for export -->
+                            <form id="exportForm" th:action="@{/settings/export}" method="post" style="display: none;">
+                            </form>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Activity Log Card -->
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                    </div>
+                    <div class="activity-log">
+                        <div class="activity-item" th:each="activity : ${activities}">
+                            <div class="activity-header">
+                                <div class="activity-title">
+                                    <span class="activity-icon">
+                                        <i th:if="${#strings.contains(activity.action, 'Password')}"
+                                            class="fas fa-lock activity-security"></i>
+                                        <i th:if="${#strings.contains(activity.action, 'Settings')}"
+                                            class="fas fa-cog activity-settings"></i>
+                                        <i th:if="${#strings.contains(activity.action, 'BackUp')}"
+                                            class="fas fa-database activity-backup"></i>
+                                        <i th:unless="${#strings.contains(activity.action, 'Password') or 
+                                 #strings.contains(activity.action, 'Settings') or
+                                 #strings.contains(activity.action, 'BackUp')}"
+                                            class="fas fa-sign-in-alt activity-login"></i>
+                                    </span>
+                                    <span th:text="${activity.action}">Action</span>
+                                </div>
+                                <div class="activity-time"
+                                    th:text="${#temporals.format(activity.timestamp, 'MMM dd, yyyy hh:mm a')}">
+                                    Time
+                                </div>
+                            </div>
+                            <div class="activity-details">
+                                <div th:if="${activity.description}" th:text="${activity.description}">Description</div>
+                                <div th:if="${activity.oldValue}">
+                                    Old Value: <span th:text="${activity.oldValue}"></span>
+                                </div>
+                                <div th:if="${activity.newValue}">
+                                    New Value: <span th:text="${activity.newValue}"></span>
+                                </div>
+                                <div th:if="${activity.ipAddress}">
+                                    IP: <span th:text="${activity.ipAddress}"></span>
+                                </div>
+                                <div th:if="${activity.hostName}">
+                                    Host: <span th:text="${activity.hostName}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Mobile sidebar toggle functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+            const mobileSidebar = document.querySelector('.mobile-sidebar');
+            const sidebarOverlay = document.querySelector('.sidebar-overlay');
+            const closeSidebar = document.querySelector('.close-sidebar');
+
+            mobileMenuToggle.addEventListener('click', function () {
+                mobileSidebar.classList.add('show');
+                sidebarOverlay.classList.add('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'true');
+            });
+
+            closeSidebar.addEventListener('click', function () {
+                mobileSidebar.classList.remove('show');
+                sidebarOverlay.classList.remove('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            });
+
+            sidebarOverlay.addEventListener('click', function () {
+                mobileSidebar.classList.remove('show');
+                sidebarOverlay.classList.remove('active');
+                mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            });
+
+            // Password strength checker
+            const newPassword = document.getElementById('newPassword');
+            if (newPassword) {
+                newPassword.addEventListener('input', function () {
+                    checkPasswordStrength(this.value);
+                });
+            }
+
+            // Theme selector
+            const themeOptions = document.querySelectorAll('.theme-option');
+            themeOptions.forEach(option => {
+                option.addEventListener('click', function () {
+                    themeOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    // Here you would add code to actually change the theme
+                });
+            });
+
+            // Copy API key button
+            const copyBtn = document.querySelector('.btn-copy');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', function () {
+                    const apiKey = document.querySelector('.api-key-value').textContent;
+                    navigator.clipboard.writeText(apiKey).then(() => {
+                        const originalHtml = this.innerHTML;
+                        this.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => {
+                            this.innerHTML = originalHtml;
+                        }, 2000);
+                    });
+                });
+            }
+        });
+
+        function checkPasswordStrength(password) {
+            const strengthBar = document.querySelector('.password-strength-bar');
+            const hints = document.querySelectorAll('.password-hint');
+            const container = document.querySelector('.password-strength');
+
+            // Reset all hints
+            hints.forEach(hint => {
+                hint.classList.remove('valid');
+                hint.classList.add('invalid');
+            });
+
+            // Check password criteria
+            const hasMinLength = password.length >= 8;
+            const hasNumber = /\d/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            // Update hints based on criteria
+            if (hasMinLength) {
+                hints[0].classList.remove('invalid');
+                hints[0].classList.add('valid');
+            }
+            if (hasNumber) {
+                hints[1].classList.remove('invalid');
+                hints[1].classList.add('valid');
+            }
+            if (hasSpecialChar) {
+                hints[2].classList.remove('invalid');
+                hints[2].classList.add('valid');
+            }
+
+            // Determine strength level
+            let strength = 0;
+            if (hasMinLength) strength++;
+            if (hasNumber) strength++;
+            if (hasSpecialChar) strength++;
+
+            // Update strength bar
+            container.className = 'password-strength';
+            if (password.length > 0) {
+                if (strength === 1) {
+                    container.classList.add('password-weak');
+                } else if (strength === 2) {
+                    container.classList.add('password-medium');
+                } else if (strength === 3) {
+                    container.classList.add('password-strong');
+                }
+            }
+        }
+
+        // Form submission handlers
+        document.getElementById('generalSettingsForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('General settings saved successfully!');
+        });
+
+        document.getElementById('accountSettingsForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Client-side validation
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword && newPassword !== confirmPassword) {
+                alert('New passwords do not match');
+                return;
+            }
+
+            // Submit the form
+            this.submit();
+        });
+
+        // Form submission handlers
+        document.getElementById('preferencesForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Collect form data
+            const formData = new FormData(this);
+            const data = {
+                maintenanceMode: document.getElementById('maintenanceMode').checked,
+                userRegistration: document.getElementById('userRegistration').checked,
+                emailNotifications: document.getElementById('emailNotifications').checked,
+                auditLogging: document.getElementById('auditLogging').checked,
+                sessionTimeout: document.getElementById('sessionTimeout').value
+            };
+
+            console.log("Submitting preferences form with data:", data);
+
+            // Submit the form
+            this.submit();
+        });
+
+        document.getElementById('apiSettingsForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('API settings saved successfully!');
+        });
+
+        document.getElementById('backupForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            alert('Backup settings saved successfully!');
+        });
+        // Display flash messages if they exist
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check for success message
+            const successMessage = document.querySelector('[data-th-if="${success}"]');
+            if (successMessage) {
+                alert(successMessage.textContent);
+            }
+
+            // Check for error message
+            const errorMessage = document.querySelector('[data-th-if="${error}"]');
+            if (errorMessage) {
+                alert(errorMessage.textContent);
+            }
+        });
+
+        // Add this to your existing script section
+        document.querySelectorAll('.backup-option').forEach(option => {
+            option.addEventListener('click', function () {
+                this.classList.add('active');
+                setTimeout(() => {
+                    this.classList.remove('active');
+                }, 300);
+            });
+        });
+    </script>
+</body>
+
+</html>

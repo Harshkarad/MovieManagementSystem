@@ -1,0 +1,784 @@
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0 15px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+h1 {
+    font-size: 1.5rem;
+    color: #3498db;
+}
+
+.user-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+#loginBtn {
+    padding: 8px 15px;
+    background-color: #e63946;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#loginBtn:hover {
+    background-color: #c1121f;
+}
+
+#loginBtn a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#loginBtn i {
+    font-size: 0.9rem;
+}
+
+#registerBtn {
+    background-color: #1d3557;
+    color: white;
+}
+
+.btn-home {
+    padding: 8px 15px;
+    background-color: #457b9d;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    /* margin-right: 10px; */
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+}
+
+.btn-home:hover {
+    background-color: #1d3557;
+    color: white;
+}
+
+.btn-home i {
+    font-size: 0.9rem;
+}
+
+.search-bar {
+    display: flex;
+    margin: 20px 0;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    font-size: 1rem;
+}
+
+.search-bar button {
+    padding: 0 15px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+/* Movie Detail Header */
+.movie-detail-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+@media (min-width: 768px) {
+    .movie-detail-header {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+}
+
+.movie-poster {
+    width: 100%;
+    height: auto;
+    max-width: 300px;
+    margin: 0 auto 20px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 768px) {
+    .movie-poster {
+        width: 200px;
+        height: 300px;
+        margin-right: 30px;
+        margin-bottom: 0;
+    }
+}
+
+.movie-info {
+    flex: 1;
+}
+
+.movie-title {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.movie-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.movie-meta span {
+    display: flex;
+    align-items: center;
+}
+
+.movie-meta i {
+    margin-right: 5px;
+}
+
+.movie-actions {
+    margin-top: 20px;
+}
+
+.btn-book {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-book:hover {
+    background-color: #c1121f;
+}
+
+/* Movie Sections */
+.movie-sections {
+    margin-top: 30px;
+}
+
+.section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+    border-bottom: 2px solid #e63946;
+    padding-bottom: 5px;
+}
+
+/* Screening Cards */
+.screening-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+@media (min-width: 576px) {
+    .screening-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    .screening-cards {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.screening-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.screening-time {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #e63946;
+    margin-bottom: 10px;
+}
+
+.screening-details p {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Cast Grid */
+.cast-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+@media (min-width: 576px) {
+    .cast-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .cast-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    .cast-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+.cast-member {
+    text-align: center;
+}
+
+.cast-photo {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* Similar Movies */
+.similar-movies {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+@media (min-width: 576px) {
+    .similar-movies {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    .similar-movies {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.similar-movie {
+    text-align: center;
+    cursor: pointer;
+}
+
+.similar-poster {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    transition: transform 0.3s;
+}
+
+@media (min-width: 768px) {
+    .similar-poster {
+        height: 250px;
+    }
+}
+
+.similar-poster:hover {
+    transform: scale(1.05);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 95%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #333;
+}
+
+/* Booking Steps */
+.booking-step {
+    display: none;
+}
+
+.booking-step.active {
+    display: block;
+}
+
+.step-indicator {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    margin: 0 5px;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.step.active {
+    color: #e63946;
+}
+
+.step-number {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background-color: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    font-size: 0.8rem;
+}
+
+.step.active .step-number {
+    background-color: #e63946;
+    color: white;
+}
+
+/* Theater Options */
+.theater-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+@media (min-width: 576px) {
+    .theater-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.theater-option {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.theater-option:hover {
+    border-color: #e63946;
+    background-color: #f9f9f9;
+}
+
+.theater-option.selected {
+    border-color: #e63946;
+    background-color: #ffecec;
+}
+
+.theater-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.theater-time {
+    color: #e63946;
+    font-size: 1rem;
+}
+
+.theater-seats {
+    color: #666;
+    margin-top: 5px;
+    font-size: 0.9rem;
+}
+
+/* Seat Map */
+.seat-map {
+    margin-top: 20px;
+    text-align: center;
+    overflow-x: auto;
+}
+
+.screen {
+    background-color: #333;
+    color: white;
+    padding: 5px;
+    margin-bottom: 20px;
+    border-radius: 3px;
+    font-size: 0.9rem;
+}
+
+.seats-grid {
+    display: inline-block;
+    min-width: 300px;
+}
+
+.seat-row {
+    display: flex;
+    margin-bottom: 10px;
+    justify-content: center;
+}
+
+.seat {
+    width: 25px;
+    height: 25px;
+    margin: 0 3px;
+    background-color: #ddd;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.7rem;
+}
+
+@media (min-width: 576px) {
+    .seat {
+        width: 30px;
+        height: 30px;
+        margin: 0 5px;
+        font-size: 0.8rem;
+    }
+}
+
+.seat:hover {
+    background-color: #ccc;
+}
+
+.seat.selected {
+    background-color: #e63946;
+    color: white;
+}
+
+.seat.occupied {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+.seat.legend {
+    cursor: default;
+    background-color: transparent;
+    font-size: 0.7rem;
+    width: auto;
+    padding: 0 5px;
+}
+
+/* Payment Options */
+.payment-options {
+    margin-top: 20px;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.payment-option.selected {
+    border-color: #e63946;
+    background-color: #ffecec;
+}
+
+.payment-option input {
+    margin-right: 10px;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* Booking Summary */
+.booking-summary {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.booking-summary h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.summary-total {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+
+/* Navigation Buttons */
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-next,
+.btn-prev,
+.btn-confirm {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    flex: 1;
+    min-width: 120px;
+}
+
+.btn-next,
+.btn-confirm {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn-next:hover,
+.btn-confirm:hover {
+    background-color: #c1121f;
+}
+
+.btn-prev {
+    background-color: #ddd;
+}
+
+.btn-prev:hover {
+    background-color: #ccc;
+}
+
+/* Confirmation Page */
+.confirmation-icon {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.confirmation-icon i {
+    font-size: 60px;
+    color: #4CAF50;
+}
+
+/* Print Button */
+.print-btn-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+/* Add this to your style section */
+.sidebar {
+    display: none !important;
+}
+
+.review-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+}
+
+.review-card:hover {
+    transform: translateY(-3px);
+}
+
+.review-rating {
+    color: #e63946;
+    font-weight: bold;
+}
+
+.review-date {
+    color: #666;
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+}
+
+.btn-confirm {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-confirm:hover {
+    background-color: #c1121f;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.review-header h4 {
+    margin: 0;
+}
+
+.review-rating {
+    color: #e63946;
+    font-weight: bold;
+}
+
+.btn-wishlist {
+    padding: 10px 20px;
+    background-color: #fff;
+    color: #e63946;
+    border: 1px solid #e63946;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-wishlist:hover {
+    background-color: #ffecec;
+}
+
+.btn-wishlist.active {
+    background-color: #e63946;
+    color: white;
+    border-color: #e63946;
+}
+
+.btn-wishlist.active i {
+    color: white;
+}
+
+.seat.occupied {
+    background-color: #999;
+    cursor: not-allowed;
+}

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Movie Ticket System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            color: #e63946;
+            font-weight: bold;
+        }
+
+        .confirmation-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .confirmation-icon {
+            color: #4CAF50;
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .confirmation-message {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .booking-details {
+            text-align: left;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            width: 200px;
+            color: #555;
+        }
+
+        .detail-value {
+            flex: 1;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: #e63946;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #c1121f;
+        }
+
+        .btn-secondary {
+            background-color: #457b9d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #1d3557;
+        }
+
+        .ticket-image {
+            max-width: 100%;
+            margin-top: 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @media print {
+
+            header,
+            .actions {
+                display: none;
+            }
+
+            .confirmation-container {
+                box-shadow: none;
+                padding: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .detail-row {
+                flex-direction: column;
+            }
+
+            .detail-label {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-ticket-alt"></i> Movie Ticket System
+            </div>
+            <a th:href="@{/user-home}" class="btn btn-secondary">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+        </header>
+
+        <div class="confirmation-container">
+            <div class="confirmation-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <h1>Payment Successful!</h1>
+
+            <p class="confirmation-message">
+                Thank you for your purchase. Your booking has been confirmed and a confirmation email has been sent to
+                your registered email address.
+            </p>
+
+            <div class="booking-details">
+                <h2 style="margin-bottom: 20px; text-align: center;">Booking Details</h2>
+
+                <div class="detail-row">
+                    <div class="detail-label">Booking Reference:</div>
+                    <div class="detail-value" th:text="${ref}">BK12345678</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">Movie:</div>
+                    <div class="detail-value" th:text="${movie}">Movie Title</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">Theater:</div>
+                    <div class="detail-value" th:text="${theater}">Theater Name</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">Date & Time:</div>
+                    <div class="detail-value" th:text="${time}">Show Time</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">Screen:</div>
+                    <div class="detail-value" th:text="${screen}">Screen Number</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">Seats:</div>
+                    <div class="detail-value" th:text="${seats}">Seat Numbers</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">Number of Tickets:</div>
+                    <div class="detail-value" th:text="${tickets}">1</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">Total Amount Paid:</div>
+                    <div class="detail-value" th:text="'$' + ${#numbers.formatDecimal(total, 1, 2)}">$0.00</div>
+                </div>
+
+                <div class="detail-row" style="border-bottom: none;">
+                    <div class="detail-label">Payment Method:</div>
+                    <div class="detail-value" th:text="${payment}">Payment Method</div>
+                </div>
+            </div>
+
+            <div style="margin: 30px 0; text-align: center;">
+                <canvas id="ticketCanvas" width="600" height="200"
+                    style="border:1px solid #ddd; border-radius:8px;"></canvas>
+            </div>
+
+            <p style="margin-bottom: 20px; font-style: italic;">
+                Please arrive at least 15 minutes before the showtime. Present this confirmation or your booking
+                reference at the theater.
+            </p>
+
+            <div class="actions">
+                <button onclick="window.print()" class="btn btn-primary">
+                    <i class="fas fa-print"></i> Print Ticket
+                </button>
+                <a th:href="@{/user-home}" class="btn btn-secondary">
+                    <i class="fas fa-film"></i> Browse More Movies
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get values from Thymeleaf using data attributes
+            const movie = document.getElementById('movieTitle').textContent;
+            const theater = document.getElementById('theaterName').textContent;
+            const screen = document.getElementById('screenNumber').textContent;
+            const time = document.getElementById('showTime').textContent;
+            const seats = document.getElementById('seatNumbers').textContent;
+            const ref = document.getElementById('bookingRef').textContent;
+
+            // Generate ticket image
+            const canvas = document.getElementById('ticketCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Draw ticket background
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#e63946';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+
+            // Draw ticket content
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 20px Arial';
+            ctx.fillText('Movie Ticket', 20, 30);
+
+            ctx.font = '16px Arial';
+            ctx.fillText('Movie: ' + movie, 20, 60);
+            ctx.fillText('Theater: ' + theater + ' - ' + screen, 20, 90);
+            ctx.fillText('Time: ' + time, 20, 120);
+            ctx.fillText('Seat: ' + seats, 20, 150);
+            ctx.fillText('Ref: ' + ref, 350, 150);
+
+            // Add barcode
+            for (let i = 0; i < 50; i++) {
+                const height = 40 + Math.random() * 20;
+                ctx.fillRect(400 + (i * 3), 80, 2, height);
+            }
+        });
+    </script>
+</body>
+
+</html>

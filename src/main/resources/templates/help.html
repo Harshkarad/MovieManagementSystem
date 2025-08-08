@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieHub - Help Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/userhome.css">
+
+</head>
+<style>
+    /* Help Center Specific Styles */
+    .help-section {
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #333;
+        font-size: 2rem;
+    }
+
+    .help-categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .help-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .help-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .help-icon {
+        font-size: 2.5rem;
+        color: #3498db;
+        margin-bottom: 1rem;
+    }
+
+    .help-card h3 {
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .help-card p {
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-primary {
+        display: inline-block;
+        background-color: #3498db;
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #b2070f;
+    }
+
+    /* FAQ Section */
+    .faq-section {
+        margin: 3rem 0;
+    }
+
+    .faq-item {
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .faq-question {
+        width: 100%;
+        padding: 1.5rem;
+        text-align: left;
+        background: #f8f8f8;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.3s;
+    }
+
+    .faq-question:hover {
+        background: #eee;
+    }
+
+    .faq-question::after {
+        content: '+';
+        font-size: 1.5rem;
+        color: #3498db;
+    }
+
+    .faq-question.active::after {
+        content: '-';
+    }
+
+    .faq-answer {
+        padding: 0 1.5rem;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        background: white;
+    }
+
+    .faq-answer.active {
+        padding: 1.5rem;
+        max-height: 500px;
+    }
+
+    .faq-answer p {
+        margin: 0;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    /* Contact Section */
+    .contact-section {
+        text-align: center;
+        margin-top: 3rem;
+    }
+
+    .contact-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .contact-method {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .contact-method i {
+        font-size: 2rem;
+        color: #3498db;
+        margin-bottom: 1rem;
+    }
+
+    .contact-method h3 {
+        margin-bottom: 0.5rem;
+        color: #333;
+    }
+
+    .contact-method p {
+        color: #666;
+        margin: 0.5rem 0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .help-categories {
+            grid-template-columns: 1fr;
+        }
+
+        .faq-question {
+            padding: 1rem;
+        }
+
+        .contact-methods {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .home-button {
+        margin-left: 20px;
+        padding: 8px 16px;
+        background-color: #3498db;
+        color: #333;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+    .home-button:hover {
+        background-color: #e0e0e0;
+    }
+</style>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <a>MovieHub</a>
+                <a href="/user-home" class="home-button">Home</a>
+            </div>
+            <div class="desktop-menu">
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        <img th:src="${user.profileUrl}">
+                    </div>
+                    <div class="dropdown-menu">
+                        <a th:href="@{/profile/{id}(id=${user.id})}">Profile</a>
+                        <a href="/watchlist">Watchlist</a>
+                        <a href="/booking-history">History</a>
+                        <a href="/logout-user">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <section class="help-section">
+            <h1 class="section-title">Help Center</h1>
+
+           
+
+            <div class="faq-section" id="faq">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+
+                <div class="faq-item">
+                    <button class="faq-question">How do I book a movie ticket?</button>
+                    <div class="faq-answer">
+                        <p>To book a ticket, navigate to the movie you want to watch, select your preferred showtime,
+                            choose your seats, and proceed to payment.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">Can I cancel my booking?</button>
+                    <div class="faq-answer">
+                        <p>This feature is not available. Please contact to admin for cancellation.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">How do I change my account password?</button>
+                    <div class="faq-answer">
+                        <p>Go to your Profile page and click on 'Change Password'. You'll need to enter your current
+                            password and then your new password twice.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-section">
+                <h2 class="section-title">Still Need Help?</h2>
+                <p>Contact our customer support team for personalized assistance.</p>
+                <div class="contact-methods">
+                    <div class="contact-method">
+                        <i class="fas fa-phone"></i>
+                        <h3>Phone Support</h3>
+                        <p>1-800-4547</p>
+                        <p>Available 9AM-9PM daily</p>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fas fa-envelope"></i>
+                        <h3>Email Us</h3>
+                        <p>support@moviehub.com</p>
+                        <p>Response within 24 hours</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <a href="/home">MovieHub</a>
+                <p>Your ultimate movie management system</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Account</h4>
+                    <a th:href="@{/profile/{id}(id=${user.id})}">Profile</a>
+                    <a href="/watchlist">Watchlist</a>
+                    <a href="/booking-history">Booking History</a>
+                    <a href="/help">Help</a>
+                </div>
+
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 MovieHub. All rights reserved.</p>
+
+        </div>
+    </footer>
+
+    <!-- <script src="/js/help.js"></script> -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // FAQ Accordion functionality
+            const faqQuestions = document.querySelectorAll('.faq-question');
+
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    // Toggle active class on question
+                    question.classList.toggle('active');
+
+                    // Get the answer element
+                    const answer = question.nextElementSibling;
+
+                    // Toggle answer visibility
+                    answer.classList.toggle('active');
+
+                    // Close other open answers
+                    faqQuestions.forEach(otherQuestion => {
+                        if (otherQuestion !== question && otherQuestion.classList.contains('active')) {
+                            otherQuestion.classList.remove('active');
+                            otherQuestion.nextElementSibling.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

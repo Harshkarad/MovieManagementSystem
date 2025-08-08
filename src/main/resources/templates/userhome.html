@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieHub - Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/userhome.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <a>MovieHub</a>
+            </div>
+
+            <!-- Desktop Menu (hidden on mobile) -->
+            <div class="desktop-menu">
+                <div class="user-menu">
+                    <div class="user-avatar">
+                        <img th:src="${user.profileUrl}">
+                    </div>
+                    <div class="dropdown-menu">
+                        <a th:href="@{/profile/{id}(id=${user.id})}">Profile</a>
+                        <a href="/watchlist">Watchlist</a>
+                        <a href="/booking-history">History</a>
+                        <a href="/logout-user">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Hero Section -->
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Welcome Back, User!</h1>
+                    <p>Discover your next favorite movie</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Movies -->
+        <section class="movie-section">
+            <h2 class="section-title">Featured Movies</h2>
+            <div class="movie-grid" th:if="${movies != null and not movies.empty}">
+                <!-- Movie Card - Thymeleaf iteration -->
+                <div class="movie-card" th:each="movie : ${movies}"
+                    th:onclick="|window.location.href='/movie-details?id=' + ${movie.id}|" style="cursor: pointer;">
+                    <div class="movie-poster">
+                        <img th:src="${movie.poster}" alt="Movie Poster">
+                        <div class="movie-rating" th:text="${movie.rating}">8.5</div>
+                    </div>
+                    <div class="movie-info">
+                        <h3 th:text="${movie.title}">Movie Title</h3>
+                        <p>
+                            <span th:each="genre, iterStat : ${movie.genre}">
+                                <span th:text="${genre}"></span>
+                                <span th:unless="${iterStat.last}">, </span>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- Show message when no movies are available -->
+            <div class="no-movies-message" th:unless="${movies != null and not movies.empty}">
+                <p>No featured movies available at the moment</p>
+            </div>
+        </section>
+
+        <!-- Recently Added -->
+        <section class="movie-section" th:if="${recentMovies != null and !recentMovies.empty}">
+            <h2 class="section-title">Recently Added</h2>
+            <div class="movie-grid">
+                <!-- Movie Cards will be dynamically generated from recentMovies -->
+                <div class="movie-card" th:each="movie : ${recentMovies}"
+                    th:onclick="|window.location.href='/movie-details?id=' + ${movie.id}|" style="cursor: pointer;">
+                    <div class="movie-poster">
+                        <img th:src="${movie.poster}" th:alt="${movie.title} + ' Poster'">
+                        <div class="movie-rating" th:text="${movie.rating}">8.0</div>
+                    </div>
+                    <div class="movie-info">
+                        <h3 th:text="${movie.title}">Movie Title</h3>
+                        <p th:text="${movie.genre}">Genre1, Genre2</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Show message when no recent movies are available -->
+        <section class="movie-section" th:unless="${recentMovies != null and !recentMovies.empty}">
+            <h2 class="section-title">Recently Added</h2>
+            <div class="no-movies-message">
+                <p>Nothing added recently</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <a href="/home">MovieHub</a>
+                <p>Your ultimate movie management system</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Account</h4>
+                    <a th:href="@{/profile/{id}(id=${user.id})}">Profile</a>
+                    <a href="/watchlist">Watchlist</a>
+                    <a href="/booking-history">Booking History</a>
+                    <a href="/help">Help</a>
+                </div>
+                
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 MovieHub. All rights reserved.</p>
+            
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/js/userhome.js"></script>
+</body>
+
+</html>

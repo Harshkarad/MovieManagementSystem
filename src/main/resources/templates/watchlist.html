@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Watchlist</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e1e1e1;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            color: #e63946;
+        }
+        
+        .btn-home {
+            padding: 8px 15px;
+            background-color: #457b9d;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-home:hover {
+            background-color: #1d3557;
+        }
+        
+        .watchlist-empty {
+            text-align: center;
+            padding: 50px 0;
+        }
+        
+        .watchlist-empty i {
+            font-size: 50px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+        
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .movie-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        
+        .movie-info {
+            padding: 15px;
+        }
+        
+        .movie-title {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .added-date {
+            color: #888;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .movie-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn-remove {
+            background-color: #e63946;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-remove:hover {
+            background-color: #c1121f;
+        }
+        
+        .btn-details {
+            background-color: #457b9d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .btn-details:hover {
+            background-color: #1d3557;
+        }
+        
+        @media (max-width: 768px) {
+            .movies-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+            
+            .movie-poster {
+                height: 225px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-bookmark"></i> My Watchlist</h1>
+            <a th:href="@{/user-home}" class="btn-home"><i class="fas fa-home"></i> Home</a>
+        </header>
+        
+        <div th:if="${watchlist == null || watchlist.empty}">
+            <div class="watchlist-empty">
+                <i class="fas fa-book-open"></i>
+                <h2>Your watchlist is empty</h2>
+                <p>Add movies to your watchlist to see them here</p>
+                <a th:href="@{/user-home}" class="btn-details">Browse Movies</a>
+            </div>
+        </div>
+        
+        <div class="movies-grid" th:unless="${watchlist == null || watchlist.empty}">
+            <div class="movie-card" th:each="item : ${watchlist}">
+                <img th:src="${item.movies.poster}" alt="Movie Poster" class="movie-poster">
+                <div class="movie-info">
+                    <h3 class="movie-title" th:text="${item.movies.title}"></h3>
+                    <div class="movie-meta">
+                        <span th:text="${item.movies.releaseYear}"></span>
+                        <span><i class="fas fa-star"></i> <span th:text="${item.movies.rating}"></span></span>
+                    </div>
+                    <div class="added-date">
+                        Added on <span th:text="${#temporals.format(item.addedAt, 'MMM dd, yyyy')}"></span>
+                    </div>
+                    <div class="movie-actions">
+                        <a th:href="@{'/movie-details?id=' + ${item.movies.id}}" class="btn-details">Details</a>
+                        <button class="btn-remove" 
+                                th:onclick="'removeFromWatchlist(' + ${item.movies.id} + ')'">
+                            <i class="fas fa-trash-alt"></i> Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function removeFromWatchlist(movieId) {
+            if (confirm('Are you sure you want to remove this movie from your watchlist?')) {
+                window.location.href = '/wishlist/remove/' + movieId;
+            }
+        }
+    </script>
+</body>
+</html>

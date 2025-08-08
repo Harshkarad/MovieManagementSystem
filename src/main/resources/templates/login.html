@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieHub - Admin Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a1a2e;
+            --secondary-color: #16213e;
+            --accent-color: #e63946;
+            --text-color: #f8f9fa;
+            --light-gray: #e2e8f0;
+            --dark-gray: #2d3436;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+        }
+
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .login-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .login-header h2 {
+            margin: 10px 0 5px;
+            font-weight: 700;
+        }
+
+        .login-header p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .login-header i {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            color: var(--accent-color);
+        }
+
+        .login-body {
+            padding: 30px;
+            background-color: white;
+        }
+
+        .input-group-text {
+            background-color: white;
+            border-right: none;
+            color: var(--primary-color);
+        }
+
+        .form-control {
+            border-radius: 5px;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            border-left: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(230, 57, 70, 0.25);
+        }
+
+        .btn-login {
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 5px;
+            padding: 12px;
+            font-weight: 600;
+            width: 100%;
+            color: white;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: #c1121f;
+            transform: translateY(-2px);
+        }
+
+        .forgot-password-again,
+        .forgot-password {
+            color: var(--dark-gray);
+            text-align: center;
+            display: block;
+            margin-top: 15px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password-again:hover,
+        .forgot-password:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 5px;
+            text-align: center;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .alert-success {
+            background-color: #e6f7ee;
+            color: #10b981;
+            border-color: #a7f3d0;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #ef4444;
+            border-color: #fecaca;
+        }
+
+        .alert i {
+            margin-right: 8px;
+        }
+
+        /* Password toggle specific styles */
+        .password-toggle {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-left: none;
+            border-top-right-radius: 5px !important;
+            border-bottom-right-radius: 5px !important;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
+        .password-toggle:hover {
+            background-color: #f8f9fa;
+        }
+
+        .password-toggle.active {
+            color: var(--accent-color);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .form-check-label {
+            margin-left: 5px;
+            user-select: none;
+            color: var(--dark-gray);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .login-container {
+                margin: 20px;
+                width: calc(100% - 40px);
+            }
+
+            .login-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="login-container">
+                    <div class="login-header">
+                        <i class="fas fa-film"></i>
+                        <h2>MovieHub Ticket System</h2>
+                        <p>Admin Portal Login</p>
+                    </div>
+                    <div class="login-body">
+                        <div th:if="${param.registered}" class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> Account created successfully! Please login.
+                        </div>
+                        <div th:if="${param.error}" class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i> Invalid username or password
+                        </div>
+                        <div th:if="${message}" class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i> User Already registered
+                        </div>
+                        <div th:if="${param.logout}" class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> You have been logged out successfully
+                        </div>
+                        <div th:if="${status}" class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i> User is banned. Please contact Admin.
+                        </div>
+
+                        <form th:action="@{/login}" method="post" id="loginForm">
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" name="username" placeholder="Username"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="password" name="password"
+                                        placeholder="Password" required>
+                                    <span class="input-group-text password-toggle"><i class="fas fa-eye"></i></span>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-login">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                            <div class="text-center mt-3">
+                                <a th:href="@{/forgot-password}" class="forgot-password-again">Forgot your password?</a>
+                                <a th:href="@{/register}" class="forgot-password">Don't have an account?</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Password toggle functionality
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.querySelector('.password-toggle');
+
+            if (passwordInput && toggleBtn) {
+                toggleBtn.addEventListener('click', function () {
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                        toggleBtn.classList.add('active');
+                    } else {
+                        passwordInput.type = 'password';
+                        toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
+                        toggleBtn.classList.remove('active');
+                    }
+                });
+            }
+
+            // Form submission enhancement
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function (e) {
+                    e.preventDefault(); // Prevent default form submission
+
+                    const btn = this.querySelector('.btn-login');
+                    if (btn) {
+                        btn.disabled = true;
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
+                        // Add a small delay to ensure the spinner is visible
+                        setTimeout(() => {
+                            this.submit(); // Now submit the form
+                        }, 100);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

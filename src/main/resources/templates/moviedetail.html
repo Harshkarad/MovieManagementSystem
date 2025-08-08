@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies - Movie Ticket System</title>
+    <!-- <link rel="stylesheet" href="/css/home.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0;
+            padding: 0 15px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: #3498db;
+        }
+
+        .user-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        #loginBtn {
+            padding: 8px 15px;
+            background-color: #e63946;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        #loginBtn:hover {
+            background-color: #c1121f;
+        }
+
+        #loginBtn a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        #loginBtn i {
+            font-size: 0.9rem;
+        }
+
+        #registerBtn {
+            background-color: #1d3557;
+            color: white;
+        }
+
+        .btn-home {
+            padding: 8px 15px;
+            background-color: #457b9d;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            /* margin-right: 10px; */
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .btn-home:hover {
+            background-color: #1d3557;
+            color: white;
+        }
+
+        .btn-home i {
+            font-size: 0.9rem;
+        }
+
+        .search-bar {
+            display: flex;
+            margin: 20px 0;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+        }
+
+        .search-bar button {
+            padding: 0 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        /* Movie Detail Header */
+        .movie-detail-header {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .movie-detail-header {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: auto;
+            max-width: 300px;
+            margin: 0 auto 20px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (min-width: 768px) {
+            .movie-poster {
+                width: 200px;
+                height: 300px;
+                margin-right: 30px;
+                margin-bottom: 0;
+            }
+        }
+
+        .movie-info {
+            flex: 1;
+        }
+
+        .movie-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .movie-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .movie-meta span {
+            display: flex;
+            align-items: center;
+        }
+
+        .movie-meta i {
+            margin-right: 5px;
+        }
+
+        .movie-actions {
+            margin-top: 20px;
+        }
+
+        .btn-book {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-book:hover {
+            background-color: #c1121f;
+        }
+
+        /* Movie Sections */
+        .movie-sections {
+            margin-top: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #e63946;
+            padding-bottom: 5px;
+        }
+
+        /* Screening Cards */
+        .screening-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        @media (min-width: 576px) {
+            .screening-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 992px) {
+            .screening-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .screening-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .screening-time {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #e63946;
+            margin-bottom: 10px;
+        }
+
+        .screening-details p {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Cast Grid */
+        .cast-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        @media (min-width: 576px) {
+            .cast-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .cast-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .cast-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        .cast-member {
+            text-align: center;
+        }
+
+        .cast-photo {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        /* Similar Movies */
+        .similar-movies {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        @media (min-width: 576px) {
+            .similar-movies {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 992px) {
+            .similar-movies {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .similar-movie {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .similar-poster {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            transition: transform 0.3s;
+        }
+
+        @media (min-width: 768px) {
+            .similar-poster {
+                height: 250px;
+            }
+        }
+
+        .similar-poster:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 95%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        /* Booking Steps */
+        .booking-step {
+            display: none;
+        }
+
+        .booking-step.active {
+            display: block;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 0 5px;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .step.active {
+            color: #e63946;
+        }
+
+        .step-number {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 5px;
+            font-size: 0.8rem;
+        }
+
+        .step.active .step-number {
+            background-color: #e63946;
+            color: white;
+        }
+
+        /* Theater Options */
+        .theater-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 576px) {
+            .theater-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .theater-option {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .theater-option:hover {
+            border-color: #e63946;
+            background-color: #f9f9f9;
+        }
+
+        .theater-option.selected {
+            border-color: #e63946;
+            background-color: #ffecec;
+        }
+
+        .theater-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .theater-time {
+            color: #e63946;
+            font-size: 1rem;
+        }
+
+        .theater-seats {
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Seat Map */
+        .seat-map {
+            margin-top: 20px;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .screen {
+            background-color: #333;
+            color: white;
+            padding: 5px;
+            margin-bottom: 20px;
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+
+        .seats-grid {
+            display: inline-block;
+            min-width: 300px;
+        }
+
+        .seat-row {
+            display: flex;
+            margin-bottom: 10px;
+            justify-content: center;
+        }
+
+        .seat {
+            width: 25px;
+            height: 25px;
+            margin: 0 3px;
+            background-color: #ddd;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.7rem;
+        }
+
+        @media (min-width: 576px) {
+            .seat {
+                width: 30px;
+                height: 30px;
+                margin: 0 5px;
+                font-size: 0.8rem;
+            }
+        }
+
+        .seat:hover {
+            background-color: #ccc;
+        }
+
+        .seat.selected {
+            background-color: #e63946;
+            color: white;
+        }
+
+        .seat.occupied {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+
+        .seat.legend {
+            cursor: default;
+            background-color: transparent;
+            font-size: 0.7rem;
+            width: auto;
+            padding: 0 5px;
+        }
+
+        /* Payment Options */
+        .payment-options {
+            margin-top: 20px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .payment-option.selected {
+            border-color: #e63946;
+            background-color: #ffecec;
+        }
+
+        .payment-option input {
+            margin-right: 10px;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        /* Booking Summary */
+        .booking-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .booking-summary h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .summary-total {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        /* Navigation Buttons */
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-next,
+        .btn-prev,
+        .btn-confirm {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-next,
+        .btn-confirm {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-next:hover,
+        .btn-confirm:hover {
+            background-color: #c1121f;
+        }
+
+        .btn-prev {
+            background-color: #ddd;
+        }
+
+        .btn-prev:hover {
+            background-color: #ccc;
+        }
+
+        /* Confirmation Page */
+        .confirmation-icon {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .confirmation-icon i {
+            font-size: 60px;
+            color: #4CAF50;
+        }
+
+        /* Print Button */
+        .print-btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Add this to your style section */
+        .sidebar {
+            display: none !important;
+        }
+
+        .review-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+
+        .review-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .review-rating {
+            color: #e63946;
+            font-weight: bold;
+        }
+
+        .review-date {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        .btn-confirm {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-confirm:hover {
+            background-color: #c1121f;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .review-header h4 {
+            margin: 0;
+        }
+
+        .review-rating {
+            color: #e63946;
+            font-weight: bold;
+        }
+
+        .btn-wishlist {
+            padding: 10px 20px;
+            background-color: #fff;
+            color: #e63946;
+            border: 1px solid #e63946;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-wishlist:hover {
+            background-color: #ffecec;
+        }
+
+        .btn-wishlist.active {
+            background-color: #e63946;
+            color: white;
+            border-color: #e63946;
+        }
+
+        .btn-wishlist.active i {
+            color: white;
+        }
+
+        .seat.occupied {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-ticket-alt"></i> Movie Ticket System</h1>
+            <div class="user-controls">
+                <a th:href="@{/user-home}" class="btn-home"><i class="fas fa-home"></i> Home</a>
+                <button id="loginBtn">
+                    <a href="/logout-user"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </button>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="search-bar">
+                <input type="text" placeholder="Search movies...">
+                <button><i class="fas fa-search"></i></button>
+            </div>
+
+            <div class="movie-detail-header">
+                <!-- <div style="margin-bottom: 20px;">
+                    <a th:href="@{/user-home}" class="btn-home">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div> -->
+                <img th:src="${movie.poster}" alt="Movie Poster" class="movie-poster">
+                <div class="movie-info">
+                    <!-- <div style="margin-bottom: 20px;">
+                        <a th:href="@{/user-home}" class="btn-home">
+                            <i class="fas fa-arrow-left"></i> Back to Home
+                        </a>
+                    </div> -->
+                    <h1 class="movie-title" th:text="${movie.title}"></h1>
+                    <div class="movie-meta">
+                        <span><i class="fas fa-star"></i> 4.5/5</span>
+                        <span><i class="fas fa-clock"></i><i th:text="${movie.duration}">m</i></span>
+                        <span><i class="fas fa-calendar-alt"></i></span>
+                        <span><i class="fas fa-globe"></i> USA</span>
+                        <span><i class="fas fa-tag"></i>
+                            <span th:each="gen,iterStat : ${movie.genre}"
+                                th:text="${gen + (iterStat.last ? '' : ', ')}">
+                            </span>
+                        </span>
+                        <span><i class="fas fa-certificate"></i>Rating</span>
+                    </div>
+                    <p th:text="${movie.description}"></p>
+                    <div class="movie-actions">
+                        <button class="btn-book" onclick="openBookingModal()">
+                            <i class="fas fa-ticket-alt"></i> Book Tickets
+                        </button>
+                        <!-- <input type="hidden" name="movieid"> -->
+                        <!-- <a th:href="@{${watchlist} ? '/wishlist/remove/' + ${movie.id} : '/wishlist/' + ${movie.id}}"> -->
+                        <button class="btn-wishlist" th:classappend="${watchlist} ? 'active' : ''"
+                            th:onclick="${watchlist} ? 'removeFromWishlist(' + ${movie.id} + ')' : 'addToWishlist(' + ${movie.id} + ')'">
+                            <i class="far fa-heart" th:classappend="${watchlist} ? 'fas' : 'far'"></i>
+                            <span th:text="${watchlist} ? 'In Wishlist' : 'Add to Wishlist'"></span>
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-sections">
+                <div class="section">
+                    <h2 class="section-title">Synopsis</h2>
+                    <p th:text="${movie.description}"></p>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">Cast</h2>
+                    <div class="cast-grid">
+                        <div class="cast-member" th:each="actor : ${movie.cast}">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6oeQrtY-vkFQMXveg82ksgKSaFv0WaK0Ejw&s" alt="Actor" class="cast-photo">
+                            <h4 th:text="${actor}"></h4>
+                            <p>Actor</p>
+                        </div>
+                        <div class="cast-member">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6oeQrtY-vkFQMXveg82ksgKSaFv0WaK0Ejw&s" alt="Director" class="cast-photo">
+                            <h4 th:text="${movie.director}"></h4>
+                            <p>Director</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add this section below the "You Might Also Like" section -->
+                <div class="section">
+                    <h2 class="section-title">Reviews</h2>
+
+                    <!-- Reviews List -->
+                    <div class="reviews-list" th:if="${not #lists.isEmpty(reviews)}">
+                        <!-- Dynamic Review Cards -->
+                        <div class="review-card" th:each="review : ${reviews}">
+                            <div>
+                                <h4
+                                    th:text="${review.user.firstname + ' ' + review.user.lastname.substring(0, 1) + '.'}">
+                                    User Name</h4>
+                                <div class="review-rating">
+                                    <!-- Star rating display -->
+                                    <span th:switch="${review.rating}">
+                                        <span th:case="5">★★★★★ (5)</span>
+                                        <span th:case="4">★★★★ (4)</span>
+                                        <span th:case="3">★★★ (3)</span>
+                                        <span th:case="2">★★ (2)</span>
+                                        <span th:case="1">★ (1)</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <p class="review-date"
+                                th:text="'Posted on ' + ${#temporals.format(review.reviewDate, 'MMMM d, yyyy')}">
+                                Posted on June 15, 2023
+                            </p>
+                            <p class="review-content" th:text="${review.comment}">
+                                This movie was absolutely fantastic! The acting was superb and the storyline kept me
+                                engaged throughout. Highly recommend!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- No reviews message -->
+                    <div th:if="${#lists.isEmpty(reviews)}" style="text-align: center; padding: 20px;">
+                        <p>No reviews yet. Be the first to review this movie!</p>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- Modals -->
+        <div class="modal" id="loginModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Login</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="loginUsername">Username</label>
+                        <input type="text" id="loginUsername" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn-confirm" style="width: 100%;">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="registerModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Register</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="regFullName">Full Name</label>
+                        <input type="text" id="regFullName" placeholder="Full Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email</label>
+                        <input type="email" id="regEmail" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regUsername">Username</label>
+                        <input type="text" id="regUsername" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn-confirm" style="width: 100%;">Register</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Booking Modal -->
+        <div class="modal" id="bookingModal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+
+                <div class="step-indicator">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Tickets</div>
+                    </div>
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Theater & Time</div>
+                    </div>
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Seats</div>
+                    </div>
+                    <div class="step" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Payment</div>
+                    </div>
+                    <div class="step" data-step="5">
+                        <div class="step-number">5</div>
+                        <div class="step-title">Confirmation</div>
+                    </div>
+                </div>
+
+                <!-- Step 1: Number of Tickets -->
+                <div class="booking-step active" data-step="1">
+                    <h2>Select Number of Tickets</h2>
+                    <form id="ticketsForm">
+                        <div class="form-group">
+                            <label for="tickets">Number of Tickets:</label>
+                            <input type="number" id="tickets" min="1" max="10" value="1" required>
+                        </div>
+                        <div class="navigation-buttons">
+                            <div></div>
+                            <button type="button" class="btn-next" onclick="nextStep(1)">Next</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 2: Select Theater and Time -->
+                <div class="booking-step" data-step="2">
+                    <h2>Select Theater and Screening Time</h2>
+                    <p>Choose from available screenings for <span th:text="${movie.title}">Movie Title</span></p>
+
+                    <div th:each="screening : ${screenings}" class="theater-option" th:onclick="selectTheater(this, 
+         '[[${screening.theater.theatreName}]]', 
+         '[[${#temporals.format(screening.time, 'EEEE, MMM d, hh:mm a')}]]', 
+         '[[${screening.screen}]]', 
+         [[${screening.availableSeats}]], 
+         [[${screening.price}]],
+         [[${screening.theater.numberOfSeats}]],
+         [[${screening.theater.id}]],
+         [[${screening.id}]])" th:attr="data-total-seats=${screening.theater.numberOfSeats}">
+                        <div class="theater-name" th:text="${screening.theater.theatreName}"></div>
+                        <div class="theater-meta">
+                            <span class="screening-id">ID: <span th:text="${screening.id}"></span></span>
+                            <span class="theater-time"
+                                th:text="${#temporals.format(screening.time, 'EEEE, MMM d, hh:mm a')}"></span>
+                        </div>
+                        <div class="theater-seats"
+                            th:text="${screening.availableSeats} + '/' + ${screening.theater.numberOfSeats} + ' seats available'">
+                        </div>
+                    </div>
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep(2)">Previous</button>
+                        <button type="button" class="btn-next" onclick="nextStep(2)" id="nextToSeats"
+                            disabled>Next</button>
+                    </div>
+                </div>
+
+
+
+                <!-- Step 3: Select Seats -->
+                <div class="booking-step" data-step="3">
+                    <h2>Select Your Seats</h2>
+                    <p>Screen: <span id="selectedScreen">Screen 3</span> | Time: <span id="selectedTime">Today, 3:00
+                            PM</span></p>
+                    <p>Available Seats: <span id="availableSeatsCount">0</span>/<span id="totalSeatsCount">0</span></p>
+
+                    <div class="seat-map">
+                        <div class="screen">SCREEN</div>
+                        <div class="seats-grid">
+                            <!-- Seat legend -->
+                            <div class="seat-row">
+                                <div class="seat legend">Available</div>
+                                <div class="seat legend selected">Selected</div>
+                                <div class="seat legend occupied">Taken</div>
+                            </div>
+
+                            <!-- Dynamic seat rows will be inserted here -->
+                            <div id="seatRowsContainer"></div>
+                        </div>
+                    </div>
+
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep(3)">Previous</button>
+                        <button type="button" class="btn-next" onclick="nextStep(3)" id="nextToPayment"
+                            disabled>Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Payment -->
+                <div class="booking-step" data-step="4">
+                    <h2>Payment Information</h2>
+
+                    <div class="booking-summary">
+                        <h3>Booking Summary</h3>
+                        <div class="summary-item">
+                            <span>Movie:</span>
+                            <span id="summaryMovie">Movie Title</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Theater:</span>
+                            <span id="summaryTheater">AMC Theater</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Time:</span>
+                            <span id="summaryTime">Today, 3:00 PM</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Screen:</span>
+                            <span id="summaryScreen">Screen 3</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Tickets:</span>
+                            <span id="summaryTickets">2</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Seats:</span>
+                            <span id="summarySeats">A1, A2</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Price per ticket:</span>
+                            <span id="summaryPricePerTicket">$0.00</span>
+                        </div>
+                        <div class="summary-total">
+                            <span>Total:</span>
+                            <span id="summaryTotal">$25.98</span>
+                        </div>
+                    </div>
+
+                    <div class="payment-options">
+                        <h3>Select Payment Method</h3>
+                        <div class="payment-option" onclick="selectPayment(this, 'credit')">
+                            <input type="radio" name="payment" id="creditCard" checked>
+                            <label for="creditCard">Credit/Debit Card</label>
+                        </div>
+                        <div class="payment-option" onclick="selectPayment(this, 'paypal')">
+                            <input type="radio" name="payment" id="paypal">
+                            <label for="paypal">PayPal</label>
+                        </div>
+                        <div class="payment-option" onclick="selectPayment(this, 'applepay')">
+                            <input type="radio" name="payment" id="applepay">
+                            <label for="applepay">Apple Pay</label>
+                        </div>
+                    </div>
+
+                    <div id="creditCardForm" style="margin-top: 20px;">
+                        <div class="form-group">
+                            <label for="cardNumber">Card Number</label>
+                            <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
+                        </div>
+                        <div class="form-group">
+                            <label for="cardName">Name on Card</label>
+                            <input type="text" id="cardName" placeholder="John Doe">
+                        </div>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <div class="form-group" style="flex: 1; min-width: 150px;">
+                                <label for="expiry">Expiry Date</label>
+                                <input type="text" id="expiry" placeholder="MM/YY">
+                            </div>
+                            <div class="form-group" style="flex: 1; min-width: 150px;">
+                                <label for="cvv">CVV</label>
+                                <input type="text" id="cvv" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="paypalQrContainer" style="display: none; margin-top: 20px; text-align: center;">
+                        <h3>Scan QR Code to Pay with PayPal</h3>
+                        <img th:src="${movie.admin_Entity.qrscanner}" alt="PayPal QR Code"
+                            style="max-width: 300px; height: auto;">
+                        <p>Scan this QR code with your PayPal app to complete payment</p>
+                    </div>
+
+                    
+
+
+                    <div class="navigation-buttons">
+                        <button type="button" class="btn-prev" onclick="prevStep(4)">Previous</button>
+                        <button type="button" class="btn-confirm" onclick="nextStep(4)">Confirm Payment</button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Confirmation -->
+                <div class="booking-step" data-step="5">
+                    <h2>Booking Confirmed!</h2>
+                    <div class="confirmation-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+
+                    <div class="booking-summary">
+                        <h3>Your Booking Details</h3>
+                        <div class="summary-item">
+                            <span>Booking ID:</span>
+                            <span>BK12345678</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Movie:</span>
+                            <span id="confirmMovie">Movie Title</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Theater:</span>
+                            <span id="confirmTheater">AMC Theater</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Date & Time:</span>
+                            <span id="confirmTime">Today, 3:00 PM</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Screen:</span>
+                            <span id="confirmScreen">Screen 3</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Seats:</span>
+                            <span id="confirmSeats">A1, A2</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Total Paid:</span>
+                            <span id="confirmTotal">$25.98</span>
+                        </div>
+                    </div>
+
+                    <p style="text-align: center; margin-top: 20px;">
+                        A confirmation has been sent to your email. Please arrive at least 15 minutes before the
+                        showtime.
+                    </p>
+
+                    <div class="print-btn-container">
+                        <button class="btn-confirm" onclick="closeModalAndPrint()">
+                            <i class="fas fa-print"></i> Print Ticket
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const bookedSeatsJson = /*[[${bookedSeatsJson}]]*/ '{}';
+        /*]]>*/
+    </script>
+    <script>
+
+        // Booking process variables
+        let bookingData = {
+            movieId: null,
+            movieTitle: "",
+            numTickets: 1,
+            theater: "",
+            screen: "",
+            time: "",
+            seats: [],
+            paymentMethod: "credit",
+            total: 0,
+            price: 0,
+            theaterId: null,
+            screeningId: null  // Make sure this is included
+        };
+
+        function updatePriceSummary() {
+            document.getElementById('summaryPricePerTicket').textContent = `$${bookingData.price.toFixed(2)}`;
+            const total = (bookingData.price * bookingData.numTickets).toFixed(2);
+            document.getElementById('summaryTotal').textContent = `$${total}`;
+            bookingData.total = total;
+            document.getElementById('confirmTotal').textContent = `$${total}`;
+        }
+
+        function openBookingModal() {
+            document.getElementById('bookingModal').style.display = 'block';
+            bookingData.movieTitle = document.querySelector('.movie-title').textContent;
+            document.getElementById('movieTitleInModal').textContent = bookingData.movieTitle;
+            document.getElementById('summaryMovie').textContent = bookingData.movieTitle;
+            document.getElementById('confirmMovie').textContent = bookingData.movieTitle;
+            bookingData.price = 0;
+            bookingData.total = 0;
+            updatePriceSummary();
+        }
+
+        function nextStep(currentStep) {
+            if (currentStep === 1) {
+                const numTickets = parseInt(document.getElementById('tickets').value);
+                if (isNaN(numTickets) || numTickets < 1 || numTickets > 10) {
+                    alert("Please enter a valid number of tickets (1-10)");
+                    return;
+                }
+                bookingData.numTickets = numTickets;
+                document.getElementById('summaryTickets').textContent = numTickets;
+                if (bookingData.price) {
+                    updatePriceSummary();
+                }
+                document.getElementById('nextToSeats').disabled = true;
+            } else if (currentStep === 3) {
+                if (bookingData.seats.length !== bookingData.numTickets) {
+                    alert(`Please select exactly ${bookingData.numTickets} seat(s)`);
+                    return;
+                }
+                document.getElementById('summarySeats').textContent = bookingData.seats.join(", ");
+                document.getElementById('confirmSeats').textContent = bookingData.seats.join(", ");
+                bookingData.total = (bookingData.price * bookingData.numTickets).toFixed(2);
+                document.getElementById('summaryTotal').textContent = `$${bookingData.total}`;
+                document.getElementById('confirmTotal').textContent = `$${bookingData.total}`;
+            } else if (currentStep === 4) {
+                console.log("Final bookingData check:", bookingData);
+
+                console.log("Before redirect, bookingData:", bookingData.screeningId);  // Debug bookingData
+                // Ensure screeningId exists and is valid
+                if (!bookingData.screeningId || isNaN(bookingData.screeningId)) {
+                    alert("Please select a valid screening time first!");
+                    return;
+                }
+
+                // Redirect to Thymeleaf endpoint with all parameters
+                const queryParams = new URLSearchParams({
+                    ref: 'BK' + Math.floor(10000000 + Math.random() * 90000000),
+                    movie: bookingData.movieTitle,
+                    theater: bookingData.theater,
+                    time: bookingData.time,
+                    screen: bookingData.screen,
+                    seats: bookingData.seats.join(', '),
+                    tickets: bookingData.numTickets,
+                    total: bookingData.total,
+                    payment: bookingData.paymentMethod === 'credit' ? 'Credit Card' :
+                        bookingData.paymentMethod === 'paypal' ? 'PayPal' : 'Apple Pay',
+                    screeningId: bookingData.screeningId.toString()  // Add this line
+                });
+                console.log("Final URL:", `/payment-success?${queryParams.toString()}`);
+
+                console.log("Redirect URL params:", queryParams.toString());  // Debug URL params
+
+                console.log("Screening ID type:", typeof bookingData.screeningId);
+                console.log("Screening ID value:", bookingData.screeningId);
+                window.location.href = '/payment-success?' + queryParams.toString();
+                return;
+            }
+
+            document.querySelector(`.booking-step[data-step="${currentStep}"]`).classList.remove('active');
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+
+            const nextStep = currentStep + 1;
+            document.querySelector(`.booking-step[data-step="${nextStep}"]`).classList.add('active');
+            document.querySelector(`.step[data-step="${nextStep}"]`).classList.add('active');
+
+            // Scroll to top of modal content when changing steps
+            document.querySelector('.modal-content').scrollTop = 0;
+        }
+
+        function prevStep(currentStep) {
+            document.querySelector(`.booking-step[data-step="${currentStep}"]`).classList.remove('active');
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+
+            const prevStep = currentStep - 1;
+            document.querySelector(`.booking-step[data-step="${prevStep}"]`).classList.add('active');
+            document.querySelector(`.step[data-step="${prevStep}"]`).classList.add('active');
+
+            // Scroll to top of modal content when changing steps
+            document.querySelector('.modal-content').scrollTop = 0;
+        }
+
+        function selectTheater(element, theaterName, time, screen, seatsAvailable, price, totalSeats, theaterId, screeningId) {
+            console.log("Selected screening ID:", screeningId);
+
+            document.querySelectorAll('.theater-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            element.classList.add('selected');
+            document.getElementById('nextToSeats').disabled = false;
+
+            // Update booking data
+            bookingData.theater = theaterName;
+            bookingData.time = time;
+            bookingData.screen = screen;
+            bookingData.price = parseFloat(price);
+            bookingData.screeningId = parseInt(screeningId);  // Ensure it's a number
+            bookingData.theaterId = parseInt(theaterId);
+
+            console.log("Updated bookingData:", bookingData);
+            updatePriceSummary();
+
+            // Update UI elements
+            document.getElementById('selectedScreen').textContent = screen;
+            document.getElementById('selectedTime').textContent = time;
+            document.getElementById('availableSeatsCount').textContent = seatsAvailable;
+            document.getElementById('totalSeatsCount').textContent = totalSeats;
+
+            // Generate seats with booked seats marked
+            generateSeats(totalSeats, screeningId);
+
+            bookingData.seats = [];
+            document.getElementById('nextToPayment').disabled = true;
+        }
+
+        document.querySelectorAll('.seat:not(.legend):not(.occupied)').forEach(seat => {
+            seat.addEventListener('click', function () {
+                const seatNumber = this.getAttribute('data-seat');
+
+                if (this.classList.contains('selected')) {
+                    this.classList.remove('selected');
+                    bookingData.seats = bookingData.seats.filter(s => s !== seatNumber);
+                } else {
+                    if (bookingData.seats.length >= bookingData.numTickets) {
+                        alert(`You can only select ${bookingData.numTickets} seat(s)`);
+                        return;
+                    }
+
+                    this.classList.add('selected');
+                    bookingData.seats.push(seatNumber);
+                }
+
+                document.getElementById('nextToPayment').disabled =
+                    bookingData.seats.length !== bookingData.numTickets;
+            });
+        });
+
+        function selectPayment(element, method) {
+            document.querySelectorAll('.payment-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            element.classList.add('selected');
+            bookingData.paymentMethod = method;
+
+            // Show/hide forms based on selected method
+            document.getElementById('creditCardForm').style.display =
+                method === 'credit' ? 'block' : 'none';
+            document.getElementById('paypalQrContainer').style.display =
+                method === 'paypal' ? 'block' : 'none';
+
+            // For Apple Pay, hide both
+            if (method === 'applepay') {
+                document.getElementById('creditCardForm').style.display = 'none';
+                document.getElementById('paypalQrContainer').style.display = 'none';
+            }
+        }
+
+        function closeModalAndPrint() {
+            document.getElementById('bookingModal').style.display = 'none';
+            alert("Printing ticket...");
+            resetBookingProcess();
+        }
+
+        function resetBookingProcess() {
+            document.querySelectorAll('.booking-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.querySelector('.booking-step[data-step="1"]').classList.add('active');
+
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.querySelector('.step[data-step="1"]').classList.add('active');
+
+            document.getElementById('tickets').value = 1;
+            document.querySelectorAll('.theater-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            document.querySelectorAll('.seat.selected').forEach(seat => {
+                seat.classList.remove('selected');
+            });
+            document.getElementById('nextToSeats').disabled = true;
+            document.getElementById('nextToPayment').disabled = true;
+
+            bookingData = {
+                movieTitle: bookingData.movieTitle,
+                numTickets: 1,
+                theater: "",
+                screen: "",
+                time: "",
+                seats: [],
+                paymentMethod: "credit",
+                total: 0
+            };
+        }
+
+        document.querySelectorAll('.close').forEach(button => {
+            button.addEventListener('click', function () {
+                this.closest('.modal').style.display = 'none';
+            });
+        });
+
+        window.addEventListener('click', function (event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        });
+
+        document.getElementById('loginBtn').addEventListener('click', function () {
+            document.getElementById('loginModal').style.display = 'block';
+        });
+
+        // document.getElementById('registerBtn').addEventListener('click', function () {
+        //     document.getElementById('registerModal').style.display = 'block';
+        // });
+
+        // Modified generateSimpleSeats function
+        function generateSeats(totalSeats, screeningId) {
+            const seatRowsContainer = document.getElementById('seatRowsContainer');
+            seatRowsContainer.innerHTML = '';
+
+            // Parse the booked seats JSON from the model attribute
+            try {
+                const bookedSeatsMap = JSON.parse(bookedSeatsJson);
+                console.log("All booked seats:", bookedSeatsMap);
+
+                // Ensure screeningId is treated as a string for comparison
+                const screeningIdStr = screeningId.toString();
+                const seatsForThisScreening = bookedSeatsMap[screeningIdStr] || [];
+                console.log("Booked seats for this screening:", seatsForThisScreening);
+
+                // Create a simple grid of seats
+                const seatsPerRow = 10;
+                const numRows = Math.ceil(totalSeats / seatsPerRow);
+
+                for (let row = 0; row < numRows; row++) {
+                    const seatRow = document.createElement('div');
+                    seatRow.className = 'seat-row';
+
+                    for (let seatNum = 1; seatNum <= seatsPerRow; seatNum++) {
+                        const seatIndex = row * seatsPerRow + seatNum;
+                        if (seatIndex > totalSeats) break;
+
+                        const seatLabel = `${String.fromCharCode(65 + row)}${seatNum}`;
+                        const seat = document.createElement('div');
+                        seat.className = 'seat';
+                        seat.setAttribute('data-seat', seatLabel);
+                        seat.textContent = seatNum;
+
+                        // Check if seat is booked
+                        if (seatsForThisScreening.includes(seatLabel)) {
+                            seat.classList.add('occupied');
+                            seat.style.cursor = 'not-allowed';
+                        } else {
+                            // Add click handler only for available seats
+                            seat.addEventListener('click', function () {
+                                if (this.classList.contains('selected')) {
+                                    this.classList.remove('selected');
+                                    bookingData.seats = bookingData.seats.filter(s => s !== seatLabel);
+                                } else {
+                                    if (bookingData.seats.length >= bookingData.numTickets) {
+                                        alert(`You can only select ${bookingData.numTickets} seat(s)`);
+                                        return;
+                                    }
+                                    this.classList.add('selected');
+                                    bookingData.seats.push(seatLabel);
+                                }
+
+                                document.getElementById('nextToPayment').disabled =
+                                    bookingData.seats.length !== bookingData.numTickets;
+                            });
+                        }
+
+                        seatRow.appendChild(seat);
+                    }
+
+                    // Add row label
+                    const rowLabel = document.createElement('div');
+                    rowLabel.className = 'seat legend';
+                    rowLabel.textContent = String.fromCharCode(65 + row);
+                    seatRow.insertBefore(rowLabel, seatRow.firstChild);
+
+                    seatRowsContainer.appendChild(seatRow);
+                }
+
+                document.getElementById('nextToPayment').disabled = true;
+            } catch (error) {
+                console.error("Error generating seats:", error);
+                seatRowsContainer.innerHTML = '<p>Error loading seat map. Please try again.</p>';
+            }
+        }
+
+        function updateSelectedSeats() {
+            bookingData.seats = [];
+            document.querySelectorAll('.seat.selected').forEach(seat => {
+                bookingData.seats.push(seat.getAttribute('data-seat'));
+            });
+
+            document.getElementById('nextToPayment').disabled =
+                bookingData.seats.length !== bookingData.numTickets;
+
+            console.log("Selected seats:", bookingData.seats);
+        }
+
+
+        // function addToWishlist(movieId) {
+        //     // Get the wishlist button
+        //     const wishlistBtn = document.querySelector('.btn-wishlist');
+
+        //     // Toggle the active state immediately for better UX
+        //     const isInWishlist = !wishlistBtn.classList.contains('active');
+        //     wishlistBtn.classList.toggle('active');
+        //     wishlistBtn.innerHTML = isInWishlist ?
+        //         '<i class="fas fa-heart"></i> In Wishlist' :
+        //         '<i class="far fa-heart"></i> Add to Wishlist';
+
+        //     // Make the GET request to your endpoint
+        //     fetch(`/wishlist/${movieId}`, {
+        //         method: 'GET',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     })
+        //         .then(response => {
+        //             if (!response.ok) {
+        //                 // If the request fails, revert the UI changes
+        //                 wishlistBtn.classList.toggle('active');
+        //                 wishlistBtn.innerHTML = isInWishlist ?
+        //                     '<i class="far fa-heart"></i> Add to Wishlist' :
+        //                     '<i class="fas fa-heart"></i> In Wishlist';
+        //                 throw new Error('Network response was not ok');
+        //             }
+        //             return response.json();
+        //         })
+        //         .then(data => {
+        //             // Optional: Handle any response data if needed
+        //             console.log('Wishlist updated:', data);
+        //         })
+        //         .catch(error => {
+        //             console.error('Error:', error);
+        //             alert('Failed to update wishlist. Please try again.');
+        //         });
+        // }
+        function addToWishlist(movieId) {
+            fetch(`/wishlist/${movieId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Update button appearance immediately
+                        const wishlistBtn = document.querySelector('.btn-wishlist');
+                        wishlistBtn.classList.add('active');
+                        wishlistBtn.querySelector('i').classList.replace('far', 'fas');
+                        wishlistBtn.querySelector('span').textContent = 'In Wishlist';
+                        wishlistBtn.onclick = function () { removeFromWishlist(movieId); };
+                    } else {
+                        throw new Error('Failed to add to wishlist');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to add to wishlist. Please try again.');
+                });
+        }
+
+        function removeFromWishlist(movieId) {
+            fetch(`/wishlist/remove/${movieId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // Update button appearance immediately
+                        const wishlistBtn = document.querySelector('.btn-wishlist');
+                        wishlistBtn.classList.remove('active');
+                        wishlistBtn.querySelector('i').classList.replace('fas', 'far');
+                        wishlistBtn.querySelector('span').textContent = 'Add to Wishlist';
+                        wishlistBtn.onclick = function () { addToWishlist(movieId); };
+                    } else {
+                        throw new Error('Failed to remove from wishlist');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Failed to remove from wishlist. Please try again.');
+                });
+        }
+    </script>
+
+</body>
+
+</html>
