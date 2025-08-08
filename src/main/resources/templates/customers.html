@@ -1002,9 +1002,6 @@
             <div class="user-controls">
                 <!-- Show admin profile if logged in (mobile session attribute exists) -->
                 <div th:if="${session.mobile != null}" style="display: flex; gap: 10px;">
-                    <button id="profileBtn">
-                        <i class="fas fa-user"></i> <span class="btn-text">Admin Profile</span>
-                    </button>
                     <button id="logoutBtn" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i>
                         <span class="btn-text">Logout</span>
@@ -1991,5 +1988,6 @@
         updateButtonText();
     </script>
 </body>
+
 
 </html>
