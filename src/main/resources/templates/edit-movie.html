@@ -5,30 +5,886 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Movie - Movie Ticket System</title>
-    <link rel="stylesheet" href="/css/movies.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #e63946;
+            --primary-dark: #c1121f;
+            --secondary: #457b9d;
+            --secondary-dark: #1d3557;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --accent: #f43f5e;
+            --text: #333333;
+            --text-light: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --sidebar-width: 220px;
+            --mobile-sidebar-width: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--light);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-areas:
+                "header header"
+                "sidebar content";
+            grid-template-columns: var(--sidebar-width) 1fr;
+            min-height: 100vh;
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                grid-template-areas:
+                    "header"
+                    "content";
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block !important;
+            }
+        }
+
+        /* Enhanced Header Styles */
+        header {
+            grid-area: header;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--lighter);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .scrolled-header {
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        h1 i {
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: var(--text);
+            padding-bottom: 10px;
+            position: relative;
+            font-weight: 600;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        /* User Controls */
+        .user-controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        button {
+            padding: 10px 18px;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #loginBtn {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        #registerBtn {
+            background-color: var(--secondary-dark);
+            color: white;
+        }
+
+        #profileBtn {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        #logoutBtn {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .mobile-menu-btn:hover {
+            background-color: rgba(230, 57, 70, 0.1);
+        }
+
+        /* Modern Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #1a1a2e;
+            color: white;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            padding: 1rem 0;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            margin: 0.25rem 0;
+            position: relative;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1.5rem;
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover {
+            background-color: #334155;
+            color: white;
+            border-left-color: var(--accent);
+        }
+
+        .sidebar li.active a {
+            background-color: #334155;
+            color: white;
+            border-left-color: var(--accent);
+        }
+
+        .sidebar i {
+            width: 1.5rem;
+            font-size: 1.1rem;
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        .sidebar li.active i,
+        .sidebar a:hover i {
+            color: white;
+        }
+
+        /* Content Area */
+        .content {
+            grid-area: content;
+            padding: 30px;
+            background-color: var(--light);
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Form Styles */
+        .edit-movie-form {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--lighter);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .edit-movie-form:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .movies-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--lighter);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.2);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* Multi-select Styles */
+        .multi-select-container {
+            position: relative;
+            margin-top: 0.5rem;
+        }
+
+        .selected-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--radius-sm);
+            min-height: 3rem;
+            align-items: center;
+            cursor: pointer;
+            background: var(--lighter);
+            transition: var(--transition);
+        }
+
+        .selected-options:hover {
+            border-color: var(--primary);
+        }
+
+        .selected-option {
+            background: var(--primary-light);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .remove-option {
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--danger);
+        }
+
+        .dropdown-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            background: var(--lighter);
+            border: 2px solid var(--light-gray);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-md);
+            z-index: 10;
+            display: none;
+        }
+
+        .dropdown-options.show {
+            display: block;
+        }
+
+        .dropdown-option {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dropdown-option:hover {
+            background: var(--light);
+        }
+
+        .dropdown-option.selected {
+            background: var(--primary-light);
+            font-weight: 600;
+        }
+
+        /* Tag Input Styles */
+        .input-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--radius-sm);
+            min-height: 3rem;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .input-tags:hover {
+            border-color: var(--primary);
+        }
+
+        .tag {
+            background: var(--light-gray);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+            color: var(--danger);
+        }
+
+        .tag-input {
+            flex: 1;
+            min-width: 120px;
+            border: none;
+            outline: none;
+            padding: 0.5rem;
+            background: transparent;
+        }
+
+        /* Image Preview */
+        .image-preview {
+            margin-top: 1rem;
+            width: 200px;
+            height: 300px;
+            border: 2px dashed var(--light-gray);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: var(--light);
+            transition: var(--transition);
+        }
+
+        .image-preview:hover {
+            border-color: var(--primary);
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        /* Screening Entries */
+        .screening-entry {
+            background: var(--light);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+            border: 2px solid var(--light-gray);
+            transition: var(--transition);
+        }
+
+        .screening-entry:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-remove-screening {
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-remove-screening:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-add-screening {
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-add-screening:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .btn-cancel {
+            background: var(--text-light);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: none;
+            font-weight: 500;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .view-btn {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .edit-btn {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .ban-btn {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        /* Mobile Sidebar */
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100vh;
+            background-color: var(--darker);
+            z-index: 1000;
+            transition: var(--transition);
+            overflow-y: auto;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-sidebar.show {
+            left: 0;
+        }
+
+        .mobile-sidebar-header {
+            padding: 25px;
+            background-color: rgba(15, 23, 42, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .mobile-sidebar-header h3 {
+            color: white;
+            margin: 0;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+        }
+
+        .mobile-sidebar-header .close-sidebar {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 5px;
+            border-radius: 50%;
+        }
+
+        .mobile-sidebar-header .close-sidebar:hover {
+            background-color: rgba(244, 63, 94, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .mobile-sidebar ul {
+            list-style: none;
+            padding: 15px 0;
+            margin: 0;
+        }
+
+        .mobile-sidebar li {
+            margin: 0;
+        }
+
+        .mobile-sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 30px;
+            color: #e2e8f0;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+        }
+
+        .mobile-sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+            padding-left: 35px;
+        }
+
+        .mobile-sidebar li.active a {
+            background-color: rgba(244, 63, 94, 0.15);
+            color: white;
+            border-left-color: var(--accent);
+        }
+
+        .mobile-sidebar i {
+            width: 24px;
+            font-size: 1.1rem;
+            text-align: center;
+            color: #94a3b8;
+        }
+
+        .mobile-sidebar li.active i,
+        .mobile-sidebar a:hover i {
+            color: white;
+        }
+
+        .mobile-sidebar-footer {
+            padding: 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+        }
+
+        /* Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+            transition: var(--transition);
+        }
+
+        .overlay.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .sidebar {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            header {
+                padding: 15px 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .movies-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn-cancel,
+            .btn-submit {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .mobile-sidebar {
+                width: 85%;
+                left: -85%;
+            }
+
+            .mobile-sidebar a {
+                padding: 14px 25px;
+                font-size: 0.95rem;
+            }
+
+            .user-controls button .btn-text {
+                display: none;
+            }
+
+            .action-btn .action-text {
+                display: none;
+            }
+
+            .edit-movie-form {
+                padding: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Genre Tag Styles */
+        .genre-tag {
+            background-color: #e2e8f0;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .remove-tag {
+            cursor: pointer;
+            color: #666;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
         <header>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
             <h1><i class="fas fa-ticket-alt"></i> Movie Ticket System</h1>
             <div class="user-controls">
-                <button id="loginBtn">Login</button>
-                <button id="registerBtn">Register</button>
+                <!-- Show admin profile if logged in -->
+                <div th:if="${session.mobile != null}" style="display: flex; gap: 10px;">
+                    <button id="profileBtn">
+                        <i class="fas fa-user"></i> <span class="btn-text">Admin Profile</span>
+                    </button>
+                    <button id="logoutBtn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="btn-text">Logout</span>
+                    </button>
+                </div>
+                <!-- Show login/register if not logged in -->
+                
             </div>
         </header>
 
         <nav class="sidebar">
             <ul>
                 <li><a href="/admin-home"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="/movies"><i class="fas fa-film"></i> Movies</a></li>
+                <li class="active"><a href="/movies"><i class="fas fa-film"></i> Movies</a></li>
                 <li><a href="#"><i class="fas fa-calendar-alt"></i> Screenings</a></li>
                 <li><a href="#"><i class="fas fa-users"></i> Customers</a></li>
                 <li><a href="#"><i class="fas fa-chart-bar"></i> Reports</a></li>
                 <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
             </ul>
         </nav>
+
+        <!-- Mobile Sidebar -->
+        <div class="mobile-sidebar" id="mobileSidebar">
+            <div class="mobile-sidebar-header">
+                <h3><i class="fas fa-ticket-alt"></i> Menu</h3>
+                <button class="close-sidebar" id="closeSidebar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <ul>
+                <li><a href="/admin-home"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li class="active"><a href="/movies"><i class="fas fa-film"></i> Movies</a></li>
+                <li><a href="#"><i class="fas fa-calendar-alt"></i> Screenings</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> Customers</a></li>
+                <li><a href="#"><i class="fas fa-chart-bar"></i> Reports</a></li>
+                <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+            <div class="mobile-sidebar-footer">
+                Movie Ticket System &copy; <span id="currentYear"></span>
+            </div>
+        </div>
+        <div class="overlay" id="overlay"></div>
 
         <main class="content">
             <div class="movies-header">
@@ -38,7 +894,8 @@
                 </a>
             </div>
 
-            <form id="editMovieForm" th:action="@{/update-movie/{id}(id=${movie.id})}" th:object="${movie}" method="post">
+            <form id="editMovieForm" th:action="@{/update-movie/{id}(id=${movie.id})}" th:object="${movie}"
+                method="post">
                 <div class="form-group">
                     <label for="movieTitle">Title*</label>
                     <input type="text" id="movieTitle" th:field="*{title}" required placeholder="Enter movie title">
@@ -70,11 +927,7 @@
                     <label for="movieGenre">Genres*</label>
                     <div class="multi-select-container">
                         <div class="selected-options" id="genreSelectedOptions">
-                            <span th:each="gen : ${movie.genre}" class="selected-option">
-                                <span th:text="${gen}"></span>
-                                <span class="remove-option" onclick="removeGenre(this)">×</span>
-                            </span>
-                            <span class="placeholder" th:if="${movie.genre.isEmpty()}">Select genres...</span>
+                            <span th:if="${#lists.isEmpty(movie.genre)}" class="placeholder">Select genres...</span>
                         </div>
                         <select id="movieGenre" multiple class="hidden-select" th:field="*{genre}">
                             <option value="Action">Action</option>
@@ -114,7 +967,8 @@
                             <input type="text" id="movieCastInput" class="tag-input"
                                 placeholder="Add cast member and press Enter">
                         </div>
-                        <input type="hidden" id="movieCast" name="cast" th:value="${#strings.listJoin(movie.cast, ',')}">
+                        <input type="hidden" id="movieCast" name="cast"
+                            th:value="${#strings.listJoin(movie.cast, ',')}">
                     </div>
                 </div>
 
@@ -155,12 +1009,13 @@
                                 <input type="hidden" name="screeningIds" th:value="${screening.id}">
                                 <div class="form-group">
                                     <label>Date</label>
-                                    <input type="date" name="screeningDates" class="screening-date" 
-                                        th:value="${#temporals.format(screening.time.toLocalDate(), 'yyyy-MM-dd')}" required>
+                                    <input type="date" name="screeningDates" class="screening-date"
+                                        th:value="${#temporals.format(screening.time.toLocalDate(), 'yyyy-MM-dd')}"
+                                        required>
                                 </div>
                                 <div class="form-group">
                                     <label>Time</label>
-                                    <input type="time" name="screeningTimes" class="screening-time" 
+                                    <input type="time" name="screeningTimes" class="screening-time"
                                         th:value="${#temporals.format(screening.time.toLocalTime(), 'HH:mm')}" required>
                                 </div>
                                 <div class="form-group">
@@ -178,12 +1033,13 @@
                                     <input type="number" name="availableSeats" class="screening-seats"
                                         th:value="${screening.availableSeats}" placeholder="Available seats" required>
                                 </div>
-                                <button type="button" class="btn-remove-screening" 
+                                <button type="button" class="btn-remove-screening"
                                     onclick="removeScreening(this)">×</button>
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn-add-screening" onclick="addScreening()">Add Another Screening</button>
+                    <button type="button" class="btn-add-screening" onclick="addScreening()">Add Another
+                        Screening</button>
                 </div>
 
                 <div class="form-actions">
@@ -194,6 +1050,272 @@
         </main>
     </div>
 
-    <script src="/js/edit-movie.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Set current year in footer
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+            // Mobile sidebar elements
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            const closeSidebar = document.getElementById('closeSidebar');
+            const overlay = document.getElementById('overlay');
+
+            // Toggle sidebar function
+            function toggleSidebar() {
+                mobileSidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+                document.body.classList.toggle('no-scroll');
+            }
+
+            // Event listeners for mobile sidebar
+            mobileMenuBtn.addEventListener('click', toggleSidebar);
+            closeSidebar.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Close sidebar when clicking on a link
+            document.querySelectorAll('.mobile-sidebar a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 992) {
+                        toggleSidebar();
+                    }
+                });
+            });
+
+            // Initialize genre selection
+            initializeGenreMultiSelect();
+
+            // Initialize other functionality
+            setupCastTags();
+            setupPosterPreview();
+            setupScreenings();
+        });
+
+        // Genre multi-select functionality (same as movies list page)
+        // Genre multi-select functionality (same as movies list page)
+        function initializeGenreMultiSelect() {
+            const genreSelect = document.getElementById('movieGenre');
+            if (!genreSelect) return;
+
+            const genreSelectedOptions = document.getElementById('genreSelectedOptions');
+            const genreDropdownOptions = document.getElementById('genreDropdownOptions');
+
+            // Create dropdown options
+            Array.from(genreSelect.options).forEach(option => {
+                const optionItem = document.createElement('div');
+                optionItem.className = 'dropdown-option';
+                optionItem.textContent = option.textContent;
+                optionItem.dataset.value = option.value;
+
+                if (option.selected) {
+                    optionItem.classList.add('selected');
+                }
+
+                optionItem.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    option.selected = !option.selected;
+                    optionItem.classList.toggle('selected', option.selected);
+                    updateSelectedGenres();
+                });
+
+                genreDropdownOptions.appendChild(optionItem);
+            });
+
+            function updateSelectedGenres() {
+                genreSelectedOptions.innerHTML = '';
+                const selectedOptions = Array.from(genreSelect.selectedOptions);
+
+                if (selectedOptions.length === 0) {
+                    genreSelectedOptions.innerHTML = '<span class="placeholder">Select genres...</span>';
+                    return;
+                }
+
+                selectedOptions.forEach(option => {
+                    const tag = document.createElement('div');
+                    tag.className = 'genre-tag';
+                    tag.innerHTML = `
+                ${option.textContent}
+                <span class="remove-tag" data-value="${option.value}">×</span>
+            `;
+                    genreSelectedOptions.appendChild(tag);
+
+                    // Add event listeners to remove buttons
+                    tag.querySelector('.remove-tag').addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        const value = this.dataset.value;
+                        const option = Array.from(genreSelect.options).find(opt => opt.value === value);
+                        if (option) {
+                            option.selected = false;
+                            updateSelectedGenres();
+                            const dropdownOption = Array.from(genreDropdownOptions.children)
+                                .find(opt => opt.dataset.value === value);
+                            if (dropdownOption) {
+                                dropdownOption.classList.remove('selected');
+                            }
+                        }
+                    });
+                });
+            }
+
+            // Toggle dropdown
+            // Toggle dropdown
+            document.querySelector('.multi-select-container').addEventListener('click', function (e) {
+                e.stopPropagation();
+                genreDropdownOptions.classList.toggle('show');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!genreDropdownOptions.contains(e.target) &&
+                    !e.target.closest('.multi-select-container')) {
+                    genreDropdownOptions.classList.remove('show');
+                }
+            });
+
+            // Initialize
+            updateSelectedGenres();
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!genreDropdownOptions.contains(e.target) &&
+                !e.target.closest('.multi-select-container')) {
+                genreDropdownOptions.classList.remove('show');
+            }
+        });
+
+        // Initialize
+        updateSelectedGenres();
+        }
+
+        // Cast tags functionality
+        function setupCastTags() {
+            const castInput = document.getElementById('movieCastInput');
+            const castTags = document.getElementById('castTags');
+            const castHiddenInput = document.getElementById('movieCast');
+
+            castInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const value = this.value.trim();
+                    if (value) {
+                        addCastTag(value);
+                        this.value = '';
+                        updateCastHiddenInput();
+                    }
+                }
+            });
+
+            // Initialize existing tags with remove functionality
+            document.querySelectorAll('#castTags .tag-remove').forEach(removeBtn => {
+                removeBtn.addEventListener('click', function () {
+                    this.parentElement.remove();
+                    updateCastHiddenInput();
+                });
+            });
+
+            function addCastTag(value) {
+                const tag = document.createElement('span');
+                tag.className = 'tag';
+                tag.innerHTML = `
+                    <span>${value}</span>
+                    <span class="tag-remove">×</span>
+                `;
+                tag.querySelector('.tag-remove').addEventListener('click', function () {
+                    tag.remove();
+                    updateCastHiddenInput();
+                });
+                castTags.insertBefore(tag, castInput);
+            }
+
+            function updateCastHiddenInput() {
+                const tags = Array.from(document.querySelectorAll('#castTags .tag span:first-child'))
+                    .map(span => span.textContent);
+                castHiddenInput.value = tags.join(',');
+            }
+        }
+
+        // Poster preview functionality
+        function setupPosterPreview() {
+            const posterInput = document.getElementById('moviePoster');
+            const posterPreview = document.getElementById('posterPreview');
+
+            posterInput.addEventListener('input', function () {
+                if (this.value) {
+                    posterPreview.innerHTML = `<img src="${this.value}" alt="Poster Preview" style="max-width: 200px;">`;
+                } else {
+                    posterPreview.innerHTML = '';
+                }
+            });
+        }
+
+        // Screening functionality
+        function setupScreenings() {
+            document.getElementById('screeningContainer').addEventListener('click', function (e) {
+                if (e.target.classList.contains('btn-remove-screening')) {
+                    if (confirm('Are you sure you want to remove this screening?')) {
+                        e.target.closest('.screening-entry').remove();
+                    }
+                }
+            });
+        }
+
+        // Expose addScreening to global scope for the button
+        window.addScreening = function () {
+            const container = document.getElementById('screeningContainer');
+            const newEntry = document.createElement('div');
+            newEntry.className = 'screening-entry';
+            newEntry.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" name="screeningDates" class="screening-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time</label>
+                        <input type="time" name="screeningTimes" class="screening-time" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Screen</label>
+                        <input type="text" name="screens" class="screening-screen" placeholder="Screen number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="number" step="0.01" name="prices" class="screening-price" placeholder="Price" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Seats</label>
+                        <input type="number" name="availableSeats" class="screening-seats" placeholder="Available seats" required>
+                    </div>
+                    <button type="button" class="btn-remove-screening">×</button>
+                </div>
+            `;
+            container.appendChild(newEntry);
+        }
+
+        // Remove screening entry
+        window.removeScreening = function (button) {
+            if (confirm('Are you sure you want to remove this screening?')) {
+                button.closest('.screening-entry').remove();
+            }
+        }
+
+        // Logout function
+        window.logout = function () {
+            fetch('/logout', {
+                method: 'GET',
+                credentials: 'same-origin'
+            })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                })
+                .catch(error => {
+                    console.error('Logout error:', error);
+                });
+        }
+    </script>
 </body>
+
 </html>
