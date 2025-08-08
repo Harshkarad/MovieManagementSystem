@@ -31,6 +31,8 @@
             --radius-lg: 14px;
             --sidebar-width: 220px;
             --mobile-sidebar-width: 280px;
+            --light-gray: #e2e8f0;
+            --primary-light: rgba(230, 57, 70, 0.1);
         }
 
         * {
@@ -74,7 +76,6 @@
             }
         }
 
-        /* Enhanced Header Styles */
         header {
             grid-area: header;
             display: flex;
@@ -129,7 +130,6 @@
             border-radius: 2px;
         }
 
-        /* User Controls */
         .user-controls {
             display: flex;
             gap: 12px;
@@ -194,7 +194,6 @@
             background-color: rgba(230, 57, 70, 0.1);
         }
 
-        /* Modern Sidebar */
         .sidebar {
             width: var(--sidebar-width);
             background-color: #1a1a2e;
@@ -255,7 +254,6 @@
             color: white;
         }
 
-        /* Content Area */
         .content {
             grid-area: content;
             padding: 30px;
@@ -263,7 +261,6 @@
             min-height: calc(100vh - 70px);
         }
 
-        /* Form Styles */
         .edit-movie-form {
             max-width: 1000px;
             margin: 0 auto;
@@ -328,47 +325,39 @@
             flex: 1;
         }
 
-        /* Multi-select Styles */
+        /* Updated Multi-select Container */
         .multi-select-container {
             position: relative;
             margin-top: 0.5rem;
-        }
-
-        .selected-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            padding: 0.75rem;
             border: 2px solid var(--light-gray);
             border-radius: var(--radius-sm);
             min-height: 3rem;
+            display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            cursor: pointer;
+            padding: 0.5rem;
+            gap: 0.5rem;
             background: var(--lighter);
             transition: var(--transition);
+            cursor: pointer;
         }
 
-        .selected-options:hover {
+        .multi-select-container:hover {
             border-color: var(--primary);
         }
 
-        .selected-option {
-            background: var(--primary-light);
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: var(--transition);
+        .placeholder {
+            color: var(--text-light);
+            padding: 0 0.5rem;
         }
 
-        .remove-option {
-            cursor: pointer;
-            font-weight: bold;
-            color: var(--danger);
+        .dropdown-arrow {
+            margin-left: auto;
+            padding: 0 10px;
+            color: var(--text-light);
         }
 
+        /* Updated Dropdown Options */
         .dropdown-options {
             position: absolute;
             top: 100%;
@@ -382,6 +371,7 @@
             box-shadow: var(--shadow-md);
             z-index: 10;
             display: none;
+            margin-top: 5px;
         }
 
         .dropdown-options.show {
@@ -399,29 +389,13 @@
         }
 
         .dropdown-option.selected {
-            background: var(--primary-light);
+            background: rgba(230, 57, 70, 0.1);
             font-weight: 600;
         }
 
-        /* Tag Input Styles */
-        .input-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            border: 2px solid var(--light-gray);
-            border-radius: var(--radius-sm);
-            min-height: 3rem;
-            align-items: center;
-            transition: var(--transition);
-        }
-
-        .input-tags:hover {
-            border-color: var(--primary);
-        }
-
+        /* Updated Tag Styles */
         .tag {
-            background: var(--light-gray);
+            background: #e2e8f0;
             padding: 0.25rem 0.75rem;
             border-radius: 1rem;
             font-size: 0.9rem;
@@ -435,6 +409,11 @@
             cursor: pointer;
             font-weight: bold;
             color: var(--danger);
+            transition: var(--transition);
+        }
+
+        .tag-remove:hover {
+            transform: scale(1.2);
         }
 
         .tag-input {
@@ -444,6 +423,10 @@
             outline: none;
             padding: 0.5rem;
             background: transparent;
+        }
+
+        .hidden-select {
+            display: none;
         }
 
         /* Image Preview */
@@ -811,22 +794,6 @@
                 opacity: 1;
             }
         }
-
-        /* Genre Tag Styles */
-        .genre-tag {
-            background-color: #e2e8f0;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .remove-tag {
-            cursor: pointer;
-            color: #666;
-        }
     </style>
 </head>
 
@@ -838,7 +805,6 @@
             </button>
             <h1><i class="fas fa-ticket-alt"></i> Movie Ticket System</h1>
             <div class="user-controls">
-                <!-- Show admin profile if logged in -->
                 <div th:if="${session.mobile != null}" style="display: flex; gap: 10px;">
                     <button id="profileBtn">
                         <i class="fas fa-user"></i> <span class="btn-text">Admin Profile</span>
@@ -848,8 +814,6 @@
                         <span class="btn-text">Logout</span>
                     </button>
                 </div>
-                <!-- Show login/register if not logged in -->
-                
             </div>
         </header>
 
@@ -925,50 +889,64 @@
 
                 <div class="form-group">
                     <label for="movieGenre">Genres*</label>
-                    <div class="multi-select-container">
-                        <div class="selected-options" id="genreSelectedOptions">
+                    <div class="multi-select-container" id="genreContainer">
+                        <div class="selected-tags" id="genreSelectedTags">
+                            <th:block th:each="g : ${movie.genre}">
+                                <div class="tag">
+                                    <span th:text="${g}"></span>
+                                    <span class="tag-remove" onclick="removeGenreTag(this)">×</span>
+                                </div>
+                            </th:block>
                             <span th:if="${#lists.isEmpty(movie.genre)}" class="placeholder">Select genres...</span>
                         </div>
-                        <select id="movieGenre" multiple class="hidden-select" th:field="*{genre}">
-                            <option value="Action">Action</option>
-                            <option value="Adventure">Adventure</option>
-                            <option value="Comedy">Comedy</option>
-                            <option value="Drama">Drama</option>
-                            <option value="Horror">Horror</option>
-                            <option value="Sci-Fi">Sci-Fi</option>
-                            <option value="Thriller">Thriller</option>
-                            <option value="Romance">Romance</option>
-                            <option value="Fantasy">Fantasy</option>
-                            <option value="Animation">Animation</option>
-                        </select>
                         <div class="dropdown-arrow"><i class="fas fa-chevron-down"></i></div>
-                        <div class="dropdown-options" id="genreDropdownOptions"></div>
+                        <div class="dropdown-options" id="genreDropdownOptions">
+                            <div class="dropdown-option" data-value="Action">Action</div>
+                            <div class="dropdown-option" data-value="Adventure">Adventure</div>
+                            <div class="dropdown-option" data-value="Comedy">Comedy</div>
+                            <div class="dropdown-option" data-value="Drama">Drama</div>
+                            <div class="dropdown-option" data-value="Horror">Horror</div>
+                            <div class="dropdown-option" data-value="Sci-Fi">Sci-Fi</div>
+                            <div class="dropdown-option" data-value="Thriller">Thriller</div>
+                            <div class="dropdown-option" data-value="Romance">Romance</div>
+                            <div class="dropdown-option" data-value="Fantasy">Fantasy</div>
+                            <div class="dropdown-option" data-value="Animation">Animation</div>
+                        </div>
+                        <select id="movieGenre" name="genre" multiple class="hidden-select" th:field="*{genre}">
+                            <option th:each="g : ${movie.genre}" th:value="${g}" th:text="${g}" selected></option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="movieDirector">Director(s)</label>
-                    <div class="multi-input-container">
-                        <div class="input-tags" id="directorTags">
-                            <input type="text" id="movieDirector" th:field="*{director}" class="tag-input"
-                                placeholder="Add director and press Enter">
+                    <div class="multi-select-container" id="directorContainer">
+                        <div class="selected-tags" id="directorSelectedTags">
+                            <th:block th:each="d : ${movie.director}">
+                                <div class="tag">
+                                    <span th:text="${d}"></span>
+                                    <span class="tag-remove" onclick="removeDirectorTag(this)">×</span>
+                                </div>
+                            </th:block>
                         </div>
+                        <input type="text" id="directorInput" class="tag-input" placeholder="Add director and press Enter">
+                        <input type="hidden" id="movieDirector" name="director" th:value="${#strings.listJoin(movie.director, ',')}">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="movieCast">Cast</label>
-                    <div class="multi-input-container">
-                        <div class="input-tags" id="castTags">
-                            <span th:each="castMember : ${movie.cast}" class="tag">
-                                <span th:text="${castMember}"></span>
-                                <span class="tag-remove" onclick="removeTag(this)">×</span>
-                            </span>
-                            <input type="text" id="movieCastInput" class="tag-input"
-                                placeholder="Add cast member and press Enter">
+                    <div class="multi-select-container" id="castContainer">
+                        <div class="selected-tags" id="castSelectedTags">
+                            <th:block th:each="c : ${movie.cast}">
+                                <div class="tag">
+                                    <span th:text="${c}"></span>
+                                    <span class="tag-remove" onclick="removeCastTag(this)">×</span>
+                                </div>
+                            </th:block>
                         </div>
-                        <input type="hidden" id="movieCast" name="cast"
-                            th:value="${#strings.listJoin(movie.cast, ',')}">
+                        <input type="text" id="castInput" class="tag-input" placeholder="Add cast member and press Enter">
+                        <input type="hidden" id="movieCast" name="cast" th:value="${#strings.listJoin(movie.cast, ',')}">
                     </div>
                 </div>
 
@@ -1083,155 +1061,257 @@
             });
 
             // Initialize genre selection
-            initializeGenreMultiSelect();
+            initializeGenreSelection();
 
-            // Initialize other functionality
-            setupCastTags();
+            // Initialize cast input
+            setupCastInput();
+
+            // Initialize director input
+            setupDirectorInput();
+
+            // Initialize poster preview
             setupPosterPreview();
+
+            // Initialize screenings
             setupScreenings();
         });
 
-        // Genre multi-select functionality (same as movies list page)
-        // Genre multi-select functionality (same as movies list page)
-        function initializeGenreMultiSelect() {
-            const genreSelect = document.getElementById('movieGenre');
-            if (!genreSelect) return;
-
-            const genreSelectedOptions = document.getElementById('genreSelectedOptions');
-            const genreDropdownOptions = document.getElementById('genreDropdownOptions');
-
-            // Create dropdown options
-            Array.from(genreSelect.options).forEach(option => {
-                const optionItem = document.createElement('div');
-                optionItem.className = 'dropdown-option';
-                optionItem.textContent = option.textContent;
-                optionItem.dataset.value = option.value;
-
-                if (option.selected) {
-                    optionItem.classList.add('selected');
+        // Genre Selection Functions
+        function initializeGenreSelection() {
+            const container = document.getElementById('genreContainer');
+            const selectedTags = document.getElementById('genreSelectedTags');
+            const dropdown = document.getElementById('genreDropdownOptions');
+            const hiddenSelect = document.getElementById('movieGenre');
+            
+            // Mark selected options in dropdown
+            hiddenSelect.querySelectorAll('option[selected]').forEach(option => {
+                const dropdownOption = Array.from(dropdown.querySelectorAll('.dropdown-option'))
+                    .find(opt => opt.dataset.value === option.value);
+                if (dropdownOption) {
+                    dropdownOption.classList.add('selected');
                 }
-
-                optionItem.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    option.selected = !option.selected;
-                    optionItem.classList.toggle('selected', option.selected);
-                    updateSelectedGenres();
-                });
-
-                genreDropdownOptions.appendChild(optionItem);
             });
 
-            function updateSelectedGenres() {
-                genreSelectedOptions.innerHTML = '';
-                const selectedOptions = Array.from(genreSelect.selectedOptions);
-
-                if (selectedOptions.length === 0) {
-                    genreSelectedOptions.innerHTML = '<span class="placeholder">Select genres...</span>';
-                    return;
+            // Toggle dropdown
+            container.addEventListener('click', function(e) {
+                if (!e.target.closest('.tag-remove')) {
+                    dropdown.classList.toggle('show');
                 }
-
-                selectedOptions.forEach(option => {
-                    const tag = document.createElement('div');
-                    tag.className = 'genre-tag';
-                    tag.innerHTML = `
-                ${option.textContent}
-                <span class="remove-tag" data-value="${option.value}">×</span>
-            `;
-                    genreSelectedOptions.appendChild(tag);
-
-                    // Add event listeners to remove buttons
-                    tag.querySelector('.remove-tag').addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        const value = this.dataset.value;
-                        const option = Array.from(genreSelect.options).find(opt => opt.value === value);
-                        if (option) {
-                            option.selected = false;
-                            updateSelectedGenres();
-                            const dropdownOption = Array.from(genreDropdownOptions.children)
-                                .find(opt => opt.dataset.value === value);
-                            if (dropdownOption) {
-                                dropdownOption.classList.remove('selected');
-                            }
-                        }
-                    });
-                });
-            }
-
-            // Toggle dropdown
-            // Toggle dropdown
-            document.querySelector('.multi-select-container').addEventListener('click', function (e) {
-                e.stopPropagation();
-                genreDropdownOptions.classList.toggle('show');
             });
 
+            // Handle option selection
+            dropdown.querySelectorAll('.dropdown-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.dataset.value;
+                    const isSelected = this.classList.contains('selected');
+                    
+                    if (isSelected) {
+                        removeGenreTagByValue(value);
+                        this.classList.remove('selected');
+                    } else {
+                        addGenreTag(value);
+                        this.classList.add('selected');
+                    }
+                });
+            });
+            
             // Close dropdown when clicking outside
-            document.addEventListener('click', function (e) {
-                if (!genreDropdownOptions.contains(e.target) &&
-                    !e.target.closest('.multi-select-container')) {
-                    genreDropdownOptions.classList.remove('show');
+            document.addEventListener('click', function(e) {
+                if (!container.contains(e.target)) {
+                    dropdown.classList.remove('show');
                 }
             });
-
-            // Initialize
-            updateSelectedGenres();
         }
 
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function (e) {
-            if (!genreDropdownOptions.contains(e.target) &&
-                !e.target.closest('.multi-select-container')) {
-                genreDropdownOptions.classList.remove('show');
+        function addGenreTag(value) {
+            const selectedTags = document.getElementById('genreSelectedTags');
+            const hiddenSelect = document.getElementById('movieGenre');
+            
+            // Remove placeholder
+            selectedTags.querySelector('.placeholder')?.remove();
+            
+            // Check if tag already exists
+            if (Array.from(selectedTags.querySelectorAll('.tag span:first-child'))
+                .some(span => span.textContent === value)) return;
+            
+            // Create new tag
+            const tag = document.createElement('div');
+            tag.className = 'tag';
+            tag.innerHTML = `
+                <span>${value}</span>
+                <span class="tag-remove" onclick="removeGenreTag(this)">×</span>
+            `;
+            selectedTags.appendChild(tag);
+            
+            // Add to hidden select
+            const option = document.createElement('option');
+            option.value = value;
+            option.selected = true;
+            option.textContent = value;
+            hiddenSelect.appendChild(option);
+        }
+
+        function removeGenreTag(element) {
+            const tag = element.closest('.tag');
+            const value = tag.querySelector('span:first-child').textContent;
+            removeGenreTagByValue(value);
+        }
+
+        function removeGenreTagByValue(value) {
+            const selectedTags = document.getElementById('genreSelectedTags');
+            const hiddenSelect = document.getElementById('movieGenre');
+            
+            // Remove tag
+            const tagToRemove = Array.from(selectedTags.querySelectorAll('.tag span:first-child'))
+                .find(span => span.textContent === value)
+                ?.closest('.tag');
+            if (tagToRemove) tagToRemove.remove();
+            
+            // Remove from hidden select
+            const optionToRemove = Array.from(hiddenSelect.options)
+                .find(option => option.value === value);
+            if (optionToRemove) optionToRemove.remove();
+            
+            // Show placeholder if no tags left
+            if (selectedTags.querySelectorAll('.tag').length === 0) {
+                selectedTags.innerHTML = '<span class="placeholder">Select genres...</span>';
             }
-        });
-
-        // Initialize
-        updateSelectedGenres();
+            
+            // Update dropdown selection state
+            const dropdownOption = Array.from(document.querySelectorAll('#genreDropdownOptions .dropdown-option'))
+                .find(opt => opt.dataset.value === value);
+            if (dropdownOption) dropdownOption.classList.remove('selected');
         }
 
-        // Cast tags functionality
-        function setupCastTags() {
-            const castInput = document.getElementById('movieCastInput');
-            const castTags = document.getElementById('castTags');
-            const castHiddenInput = document.getElementById('movieCast');
-
-            castInput.addEventListener('keypress', function (e) {
+        // Cast Functions
+        function setupCastInput() {
+            const castInput = document.getElementById('castInput');
+            const castTags = document.getElementById('castSelectedTags');
+            const hiddenInput = document.getElementById('movieCast');
+            
+            castInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     const value = this.value.trim();
                     if (value) {
                         addCastTag(value);
                         this.value = '';
-                        updateCastHiddenInput();
                     }
                 }
             });
-
-            // Initialize existing tags with remove functionality
-            document.querySelectorAll('#castTags .tag-remove').forEach(removeBtn => {
-                removeBtn.addEventListener('click', function () {
-                    this.parentElement.remove();
-                    updateCastHiddenInput();
+            
+            // Initialize remove buttons for existing tags
+            castTags.querySelectorAll('.tag-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    removeCastTag(this);
                 });
             });
+        }
 
-            function addCastTag(value) {
-                const tag = document.createElement('span');
-                tag.className = 'tag';
-                tag.innerHTML = `
-                    <span>${value}</span>
-                    <span class="tag-remove">×</span>
-                `;
-                tag.querySelector('.tag-remove').addEventListener('click', function () {
-                    tag.remove();
-                    updateCastHiddenInput();
-                });
-                castTags.insertBefore(tag, castInput);
+        function addCastTag(value) {
+            const castTags = document.getElementById('castSelectedTags');
+            const hiddenInput = document.getElementById('movieCast');
+            
+            // Create new tag
+            const tag = document.createElement('div');
+            tag.className = 'tag';
+            tag.innerHTML = `
+                <span>${value}</span>
+                <span class="tag-remove">×</span>
+            `;
+            castTags.appendChild(tag);
+            
+            // Add event to remove button
+            tag.querySelector('.tag-remove').addEventListener('click', function() {
+                removeCastTag(this);
+            });
+            
+            // Update hidden input
+            const currentCast = hiddenInput.value ? hiddenInput.value.split(',') : [];
+            currentCast.push(value);
+            hiddenInput.value = currentCast.join(',');
+        }
+
+        function removeCastTag(element) {
+            const tag = element.closest('.tag');
+            const value = tag.querySelector('span:first-child').textContent;
+            const hiddenInput = document.getElementById('movieCast');
+            
+            // Remove tag
+            tag.remove();
+            
+            // Update hidden input
+            const currentCast = hiddenInput.value.split(',');
+            const index = currentCast.indexOf(value);
+            if (index !== -1) {
+                currentCast.splice(index, 1);
+                hiddenInput.value = currentCast.join(',');
             }
+        }
 
-            function updateCastHiddenInput() {
-                const tags = Array.from(document.querySelectorAll('#castTags .tag span:first-child'))
-                    .map(span => span.textContent);
-                castHiddenInput.value = tags.join(',');
+        // Director Functions
+        function setupDirectorInput() {
+            const directorInput = document.getElementById('directorInput');
+            const directorTags = document.getElementById('directorSelectedTags');
+            const hiddenInput = document.getElementById('movieDirector');
+            
+            directorInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const value = this.value.trim();
+                    if (value) {
+                        addDirectorTag(value);
+                        this.value = '';
+                    }
+                }
+            });
+            
+            // Initialize remove buttons for existing tags
+            directorTags.querySelectorAll('.tag-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    removeDirectorTag(this);
+                });
+            });
+        }
+
+        function addDirectorTag(value) {
+            const directorTags = document.getElementById('directorSelectedTags');
+            const hiddenInput = document.getElementById('movieDirector');
+            
+            // Create new tag
+            const tag = document.createElement('div');
+            tag.className = 'tag';
+            tag.innerHTML = `
+                <span>${value}</span>
+                <span class="tag-remove">×</span>
+            `;
+            directorTags.appendChild(tag);
+            
+            // Add event to remove button
+            tag.querySelector('.tag-remove').addEventListener('click', function() {
+                removeDirectorTag(this);
+            });
+            
+            // Update hidden input
+            const currentDirectors = hiddenInput.value ? hiddenInput.value.split(',') : [];
+            currentDirectors.push(value);
+            hiddenInput.value = currentDirectors.join(',');
+        }
+
+        function removeDirectorTag(element) {
+            const tag = element.closest('.tag');
+            const value = tag.querySelector('span:first-child').textContent;
+            const hiddenInput = document.getElementById('movieDirector');
+            
+            // Remove tag
+            tag.remove();
+            
+            // Update hidden input
+            const currentDirectors = hiddenInput.value.split(',');
+            const index = currentDirectors.indexOf(value);
+            if (index !== -1) {
+                currentDirectors.splice(index, 1);
+                hiddenInput.value = currentDirectors.join(',');
             }
         }
 
@@ -1240,7 +1320,7 @@
             const posterInput = document.getElementById('moviePoster');
             const posterPreview = document.getElementById('posterPreview');
 
-            posterInput.addEventListener('input', function () {
+            posterInput.addEventListener('input', function() {
                 if (this.value) {
                     posterPreview.innerHTML = `<img src="${this.value}" alt="Poster Preview" style="max-width: 200px;">`;
                 } else {
@@ -1251,7 +1331,7 @@
 
         // Screening functionality
         function setupScreenings() {
-            document.getElementById('screeningContainer').addEventListener('click', function (e) {
+            document.getElementById('screeningContainer').addEventListener('click', function(e) {
                 if (e.target.classList.contains('btn-remove-screening')) {
                     if (confirm('Are you sure you want to remove this screening?')) {
                         e.target.closest('.screening-entry').remove();
@@ -1260,8 +1340,8 @@
             });
         }
 
-        // Expose addScreening to global scope for the button
-        window.addScreening = function () {
+        // Add new screening
+        window.addScreening = function() {
             const container = document.getElementById('screeningContainer');
             const newEntry = document.createElement('div');
             newEntry.className = 'screening-entry';
@@ -1294,14 +1374,14 @@
         }
 
         // Remove screening entry
-        window.removeScreening = function (button) {
+        window.removeScreening = function(button) {
             if (confirm('Are you sure you want to remove this screening?')) {
                 button.closest('.screening-entry').remove();
             }
         }
 
         // Logout function
-        window.logout = function () {
+        window.logout = function() {
             fetch('/logout', {
                 method: 'GET',
                 credentials: 'same-origin'
