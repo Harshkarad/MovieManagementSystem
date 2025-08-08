@@ -450,7 +450,11 @@
                             <div class="edit-mode">
                                 <label for="mobile" class="form-label">Mobile Number</label>
                                 <input type="tel" class="form-control" id="mobile" th:field="*{mobile}"
+                                    pattern="[0-9+]{0,20}" title="Please enter only numbers and optional + sign"
                                     placeholder="+1234567890">
+                                <div class="invalid-feedback">
+                                    Please enter only numbers and optional + sign (max 20 characters).
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -557,6 +561,18 @@
                         ripple.remove();
                     }, 1000);
                 });
+            });
+            // Restrict mobile input to numbers and + only
+            document.getElementById('mobile')?.addEventListener('input', function (e) {
+                this.value = this.value.replace(/[^0-9+]/g, '');
+
+                // Ensure + is only at the start if present
+                if (this.value.indexOf('+') > 0) {
+                    this.value = this.value.replace(/\+/g, '');
+                }
+                if (this.value.length > 1 && this.value.startsWith('+')) {
+                    this.value = '+' + this.value.replace(/\+/g, '');
+                }
             });
         });
     </script>
